@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>737 Sky Escape</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>737 Sky Escape</title><style>
+
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
@@ -29,8 +29,10 @@ canvas {
     top: 10px;
     left: 10px;
     right: 10px;
+
     display: flex;
     justify-content: space-between;
+
     z-index: 10;
     pointer-events: none;
 }
@@ -39,7 +41,9 @@ canvas {
     background: rgba(255,255,255,0.92);
     border: 2px solid #111;
     border-radius: 10px;
+
     padding: 8px 13px;
+
     font-size: 17px;
     font-weight: bold;
 }
@@ -47,21 +51,29 @@ canvas {
 .screen {
     position: fixed;
     inset: 0;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.35);
+
+    background: rgba(255,255,255,0.30);
+
     z-index: 20;
 }
 
 .panel {
     width: 90%;
     max-width: 430px;
+
     padding: 25px;
+
     background: white;
+
     border: 3px solid #111;
     border-radius: 18px;
+
     text-align: center;
+
     box-shadow: 0 8px 30px rgba(0,0,0,0.25);
 }
 
@@ -77,14 +89,19 @@ canvas {
 
 .startButton {
     width: 100%;
+
     padding: 14px;
     margin-top: 10px;
+
     border: 2px solid #111;
     border-radius: 10px;
+
     background: #16a34a;
     color: white;
+
     font-size: 19px;
     font-weight: bold;
+
     cursor: pointer;
 }
 
@@ -94,75 +111,111 @@ canvas {
 
 #controls {
     position: fixed;
+
     bottom: 20px;
     left: 0;
     right: 0;
+
     display: none;
+
     justify-content: space-between;
+
     padding: 0 25px;
+
     z-index: 15;
+
     pointer-events: none;
 }
 
 .controlButton {
     width: 78px;
     height: 68px;
+
     border: 2px solid #111;
     border-radius: 14px;
+
     background: rgba(255,255,255,0.9);
+
     font-size: 30px;
+
     pointer-events: auto;
+
     touch-action: none;
 }
 
-.loading {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #555;
-}
 </style></head><body><canvas id="gameCanvas"></canvas>
 
-<div id="topBar">
-    <div class="info">
-        Score: <span id="score">0</span>
-    </div><div class="info">
-    🪙 Coins: <span id="coinCount">0</span>
+<!-- =========================
+     TOP BAR
+========================= --><div id="topBar"><div class="info">
+    Score:
+    <span id="score">0</span>
 </div>
 
-</div><div id="controls">
-    <button class="controlButton" id="upButton">⬆️</button>
-    <button class="controlButton" id="downButton">⬇️</button>
-</div><div id="startScreen" class="screen">
-    <div class="panel">
-        <h1>✈️ 737 SKY ESCAPE</h1>    <p>
-        Fly your Boeing 737, avoid missiles,
-        collect coins and survive as long as possible.
+<div class="info">
+    🪙 Coins:
+    <span id="coinCount">0</span>
+</div>
+
+</div><!-- =========================
+     MOBILE CONTROLS
+========================= --><div id="controls"><button
+    class="controlButton"
+    id="upButton">
+
+    ⬆️
+
+</button>
+
+<button
+    class="controlButton"
+    id="downButton">
+
+    ⬇️
+
+</button>
+
+</div><!-- =========================
+     START SCREEN
+========================= --><div id="startScreen" class="screen"><div class="panel">
+
+    <h1>
+        ✈️ 737 SKY ESCAPE
+    </h1>
+
+    <p>
+        Fly the Boeing 737,
+        avoid missiles,
+        collect coins and survive.
     </p>
 
     <p>
-        Keyboard:
-        <strong>⬆️ UP</strong> /
+        Use
+        <strong>⬆️ UP</strong>
+        and
         <strong>⬇️ DOWN</strong>
+        to fly.
     </p>
 
-    <p>
-        Mobile:
-        use the two buttons at the bottom.
-    </p>
+    <button
+        class="startButton"
+        onclick="startGame()">
 
-    <button class="startButton" onclick="startGame()">
         START GAME
+
     </button>
 
-    <div class="loading">
-        Plane: plane.png<br>
-        Missile: missile.jpeg
-    </div>
 </div>
 
-</div><div id="gameOver" class="screen">
-    <div class="panel">
-        <h1>💥 GAME OVER</h1>    <p>
+</div><!-- =========================
+     GAME OVER
+========================= --><div id="gameOver" class="screen"><div class="panel">
+
+    <h1>
+        💥 GAME OVER
+    </h1>
+
+    <p>
         Score:
         <strong id="finalScore">0</strong>
     </p>
@@ -172,371 +225,737 @@ canvas {
         <strong id="finalCoins">0</strong>
     </p>
 
-    <button class="startButton" onclick="startGame()">
+    <button
+        class="startButton"
+        onclick="startGame()">
+
         PLAY AGAIN
+
     </button>
+
 </div>
 
 </div><script>
 
-/* ==============================
+/* ==================================================
    CANVAS
-============================== */
+================================================== */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("gameCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
 }
+
 
 resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
 
-/* ==============================
-   IMAGE FILES
-============================== */
+/* ==================================================
+   IMAGES
 
-const planeImage = new Image();
-planeImage.src = "plane.png";
+   IMPORTANT:
+   Both files must be in the same folder
+   as index.html.
+================================================== */
 
-const missileImage = new Image();
-missileImage.src = "missile.jpeg";
+const planeImage =
+    new Image();
+
+planeImage.src =
+    "plane.png";
 
 
-/* ==============================
+const missileImage =
+    new Image();
+
+missileImage.src =
+    "missile.png";
+
+
+/* ==================================================
    GAME VARIABLES
-============================== */
+================================================== */
 
 let gameRunning = false;
 
 let score = 0;
+
 let collectedCoins = 0;
 
 let missiles = [];
+
 let coins = [];
+
 let clouds = [];
 
-let movingUp = false;
-let movingDown = false;
 
-
-/* ==============================
+/* ==================================================
    PLANE
-============================== */
+
+   The size is calculated from the actual
+   image ratio so the plane is NOT stretched.
+================================================== */
 
 const plane = {
+
     x: 90,
+
     y: 300,
 
-    width: 120,
-    height: 65,
+    maxWidth: 150,
+
+    maxHeight: 75,
+
+    width: 150,
+
+    height: 75,
 
     speed: 6
+
 };
 
 
-/* ==============================
-   KEYBOARD CONTROLS
-============================== */
+/* ==================================================
+   SET PLANE IMAGE SIZE
+================================================== */
 
-document.addEventListener("keydown", function(event) {
+function calculatePlaneSize() {
 
-    if (event.key === "ArrowUp") {
-        event.preventDefault();
-        movingUp = true;
+    if (
+        planeImage.naturalWidth > 0 &&
+        planeImage.naturalHeight > 0
+    ) {
+
+        const imageRatio =
+            planeImage.naturalWidth /
+            planeImage.naturalHeight;
+
+
+        plane.width =
+            plane.maxWidth;
+
+        plane.height =
+            plane.width /
+            imageRatio;
+
+
+        if (
+            plane.height >
+            plane.maxHeight
+        ) {
+
+            plane.height =
+                plane.maxHeight;
+
+            plane.width =
+                plane.height *
+                imageRatio;
+
+        }
+
     }
 
-    if (event.key === "ArrowDown") {
-        event.preventDefault();
-        movingDown = true;
+}
+
+
+/* ==================================================
+   SET MISSILE SIZE
+================================================== */
+
+function getMissileSize() {
+
+    if (
+        missileImage.naturalWidth > 0 &&
+        missileImage.naturalHeight > 0
+    ) {
+
+        const ratio =
+            missileImage.naturalWidth /
+            missileImage.naturalHeight;
+
+
+        const width = 75;
+
+        const height =
+            width / ratio;
+
+
+        return {
+            width: width,
+            height: Math.max(20, Math.min(height, 45))
+        };
+
     }
 
-});
 
-document.addEventListener("keyup", function(event) {
+    return {
+        width: 75,
+        height: 30
+    };
 
-    if (event.key === "ArrowUp") {
-        movingUp = false;
+}
+
+
+planeImage.onload =
+    calculatePlaneSize;
+
+
+/* ==================================================
+   CONTROLS
+================================================== */
+
+let movingUp = false;
+
+let movingDown = false;
+
+
+/* ==================================================
+   KEYBOARD
+================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "ArrowUp"
+        ) {
+
+            event.preventDefault();
+
+            movingUp = true;
+
+        }
+
+
+        if (
+            event.key === "ArrowDown"
+        ) {
+
+            event.preventDefault();
+
+            movingDown = true;
+
+        }
+
     }
+);
 
-    if (event.key === "ArrowDown") {
-        movingDown = false;
+
+document.addEventListener(
+    "keyup",
+    function(event) {
+
+        if (
+            event.key === "ArrowUp"
+        ) {
+
+            movingUp = false;
+
+        }
+
+
+        if (
+            event.key === "ArrowDown"
+        ) {
+
+            movingDown = false;
+
+        }
+
     }
+);
 
-});
+
+/* ==================================================
+   MOBILE BUTTONS
+================================================== */
+
+const upButton =
+    document.getElementById(
+        "upButton"
+    );
 
 
-/* ==============================
-   MOBILE CONTROLS
-============================== */
-
-const upButton = document.getElementById("upButton");
-const downButton = document.getElementById("downButton");
+const downButton =
+    document.getElementById(
+        "downButton"
+    );
 
 
 function startUp(event) {
+
     event.preventDefault();
+
     movingUp = true;
+
 }
+
 
 function stopUp(event) {
+
     event.preventDefault();
+
     movingUp = false;
+
 }
+
 
 function startDown(event) {
+
     event.preventDefault();
+
     movingDown = true;
+
 }
+
 
 function stopDown(event) {
+
     event.preventDefault();
+
     movingDown = false;
+
 }
 
 
-upButton.addEventListener("pointerdown", startUp);
-upButton.addEventListener("pointerup", stopUp);
-upButton.addEventListener("pointercancel", stopUp);
-upButton.addEventListener("pointerleave", stopUp);
+upButton.addEventListener(
+    "pointerdown",
+    startUp
+);
+
+upButton.addEventListener(
+    "pointerup",
+    stopUp
+);
+
+upButton.addEventListener(
+    "pointercancel",
+    stopUp
+);
+
+upButton.addEventListener(
+    "pointerleave",
+    stopUp
+);
 
 
-downButton.addEventListener("pointerdown", startDown);
-downButton.addEventListener("pointerup", stopDown);
-downButton.addEventListener("pointercancel", stopDown);
-downButton.addEventListener("pointerleave", stopDown);
+downButton.addEventListener(
+    "pointerdown",
+    startDown
+);
+
+downButton.addEventListener(
+    "pointerup",
+    stopDown
+);
+
+downButton.addEventListener(
+    "pointercancel",
+    stopDown
+);
+
+downButton.addEventListener(
+    "pointerleave",
+    stopDown
+);
 
 
-/* ==============================
+/* ==================================================
    START GAME
-============================== */
+================================================== */
 
 function startGame() {
 
     score = 0;
+
     collectedCoins = 0;
 
     missiles = [];
+
     coins = [];
+
     clouds = [];
 
-    plane.y = canvas.height / 2 - plane.height / 2;
 
-    movingUp = false;
-    movingDown = false;
+    calculatePlaneSize();
+
+
+    plane.y =
+        canvas.height / 2 -
+        plane.height / 2;
+
 
     gameRunning = true;
 
-    document.getElementById("startScreen").style.display = "none";
 
-    document.getElementById("gameOver").style.display = "none";
+    document.getElementById(
+        "startScreen"
+    ).style.display = "none";
 
-    document.getElementById("controls").style.display = "flex";
+
+    document.getElementById(
+        "gameOver"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "controls"
+    ).style.display = "flex";
+
 
     updateScore();
 
-    requestAnimationFrame(gameLoop);
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
 }
 
 
-/* ==============================
+/* ==================================================
    GAME LOOP
-============================== */
+================================================== */
 
 function gameLoop() {
 
     if (!gameRunning) {
+
         return;
+
     }
+
 
     updateGame();
 
     drawGame();
 
-    requestAnimationFrame(gameLoop);
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
 }
 
 
-/* ==============================
+/* ==================================================
    UPDATE GAME
-============================== */
+================================================== */
 
 function updateGame() {
 
-    /* PLANE MOVEMENT */
+
+    /* -------------------------
+       PLANE MOVEMENT
+    ------------------------- */
 
     if (movingUp) {
-        plane.y -= plane.speed;
+
+        plane.y -=
+            plane.speed;
+
     }
+
 
     if (movingDown) {
-        plane.y += plane.speed;
+
+        plane.y +=
+            plane.speed;
+
     }
 
 
-    /* KEEP PLANE ON SCREEN */
+    /* -------------------------
+       SCREEN LIMIT
+    ------------------------- */
 
     if (plane.y < 10) {
+
         plane.y = 10;
-    }
 
-    if (plane.y + plane.height > canvas.height - 10) {
-        plane.y = canvas.height - plane.height - 10;
     }
 
 
-    /* ==========================
+    if (
+        plane.y +
+        plane.height >
+        canvas.height - 10
+    ) {
+
+        plane.y =
+            canvas.height -
+            plane.height -
+            10;
+
+    }
+
+
+    /* ==================================================
        CLOUDS
-    ========================== */
+    ================================================== */
 
-    if (Math.random() < 0.025) {
+    if (
+        Math.random() < 0.025
+    ) {
 
         clouds.push({
-            x: canvas.width + 100,
 
-            y: 40 +
+            x:
+                canvas.width + 100,
+
+            y:
+                40 +
                 Math.random() *
-                Math.max(50, canvas.height - 100),
+                Math.max(
+                    50,
+                    canvas.height - 100
+                ),
 
-            size: 25 +
+            size:
+                25 +
                 Math.random() * 35,
 
-            speed: 1 +
+            speed:
+                1 +
                 Math.random() * 1.5
+
         });
 
     }
 
-    clouds.forEach(function(cloud) {
-        cloud.x -= cloud.speed;
-    });
 
-    clouds = clouds.filter(function(cloud) {
-        return cloud.x > -180;
-    });
+    clouds.forEach(
+        function(cloud) {
+
+            cloud.x -=
+                cloud.speed;
+
+        }
+    );
 
 
-    /* ==========================
+    clouds =
+        clouds.filter(
+            function(cloud) {
+
+                return (
+                    cloud.x >
+                    -180
+                );
+
+            }
+        );
+
+
+    /* ==================================================
        MISSILES
-    ========================== */
+    ================================================== */
 
-    if (Math.random() < 0.014) {
+    if (
+        Math.random() < 0.014
+    ) {
+
+        const missileSize =
+            getMissileSize();
+
 
         missiles.push({
 
-            x: canvas.width + 80,
+            x:
+                canvas.width + 80,
 
-            y: 40 +
+            y:
+                40 +
                 Math.random() *
-                Math.max(50, canvas.height - 100),
+                Math.max(
+                    50,
+                    canvas.height - 100
+                ),
 
-            width: 75,
-            height: 35,
+            width:
+                missileSize.width,
 
-            speed: 4 +
+            height:
+                missileSize.height,
+
+            speed:
+                4 +
                 Math.random() * 3
+
         });
 
     }
 
-    missiles.forEach(function(missile) {
 
-        missile.x -= missile.speed;
+    missiles.forEach(
+        function(missile) {
 
-    });
+            missile.x -=
+                missile.speed;
 
-    missiles = missiles.filter(function(missile) {
-
-        return missile.x > -120;
-
-    });
+        }
+    );
 
 
-    /* ==========================
+    missiles =
+        missiles.filter(
+            function(missile) {
+
+                return (
+                    missile.x >
+                    -120
+                );
+
+            }
+        );
+
+
+    /* ==================================================
        COINS
-    ========================== */
+    ================================================== */
 
-    if (Math.random() < 0.02) {
+    if (
+        Math.random() < 0.02
+    ) {
 
         coins.push({
 
-            x: canvas.width + 40,
+            x:
+                canvas.width + 40,
 
-            y: 50 +
+            y:
+                50 +
                 Math.random() *
-                Math.max(50, canvas.height - 120),
+                Math.max(
+                    50,
+                    canvas.height - 120
+                ),
 
             radius: 14,
 
             speed: 3
+
         });
 
     }
 
-    coins.forEach(function(coin) {
 
-        coin.x -= coin.speed;
+    coins.forEach(
+        function(coin) {
 
-    });
+            coin.x -=
+                coin.speed;
 
-    coins = coins.filter(function(coin) {
-
-        return coin.x > -60;
-
-    });
+        }
+    );
 
 
-    /* ==========================
+    coins =
+        coins.filter(
+            function(coin) {
+
+                return (
+                    coin.x >
+                    -60
+                );
+
+            }
+        );
+
+
+    /* ==================================================
        MISSILE COLLISION
-    ========================== */
+    ================================================== */
 
-    for (let i = 0; i < missiles.length; i++) {
+    for (
+        let i = 0;
+        i < missiles.length;
+        i++
+    ) {
 
-        if (rectangleCollision(plane, missiles[i])) {
+        if (
+            rectangleCollision(
+                plane,
+                missiles[i]
+            )
+        ) {
 
             endGame();
 
             return;
+
         }
 
     }
 
 
-    /* ==========================
+    /* ==================================================
        COIN COLLECTION
-    ========================== */
+    ================================================== */
 
-    for (let i = coins.length - 1; i >= 0; i--) {
+    for (
+        let i =
+            coins.length - 1;
 
-        if (coinCollision(plane, coins[i])) {
+        i >= 0;
+
+        i--
+    ) {
+
+        if (
+            coinCollision(
+                plane,
+                coins[i]
+            )
+        ) {
 
             collectedCoins++;
 
             score += 25;
 
-            coins.splice(i, 1);
+            coins.splice(
+                i,
+                1
+            );
+
         }
 
     }
 
 
-    /* ==========================
+    /* ==================================================
        SURVIVAL SCORE
-    ========================== */
+    ================================================== */
 
     score++;
 
     updateScore();
+
 }
 
 
-/* ==============================
+/* ==================================================
    DRAW GAME
-============================== */
+================================================== */
 
 function drawGame() {
 
@@ -548,7 +967,9 @@ function drawGame() {
     );
 
 
-    /* SKY */
+    /* -------------------------
+       SKY
+    ------------------------- */
 
     const skyGradient =
         ctx.createLinearGradient(
@@ -558,17 +979,22 @@ function drawGame() {
             canvas.height
         );
 
+
     skyGradient.addColorStop(
         0,
         "#4facfe"
     );
+
 
     skyGradient.addColorStop(
         1,
         "#d9f3ff"
     );
 
-    ctx.fillStyle = skyGradient;
+
+    ctx.fillStyle =
+        skyGradient;
+
 
     ctx.fillRect(
         0,
@@ -578,99 +1004,143 @@ function drawGame() {
     );
 
 
-    /* CLOUDS */
+    /* -------------------------
+       CLOUDS
+    ------------------------- */
 
-    clouds.forEach(function(cloud) {
+    clouds.forEach(
+        function(cloud) {
 
-        drawCloud(
-            cloud.x,
-            cloud.y,
-            cloud.size
-        );
+            drawCloud(
+                cloud.x,
+                cloud.y,
+                cloud.size
+            );
 
-    });
-
-
-    /* COINS */
-
-    coins.forEach(function(coin) {
-
-        drawCoin(coin);
-
-    });
+        }
+    );
 
 
-    /* MISSILES */
+    /* -------------------------
+       COINS
+    ------------------------- */
 
-    missiles.forEach(function(missile) {
+    coins.forEach(
+        function(coin) {
 
-        drawMissile(missile);
+            drawCoin(coin);
 
-    });
+        }
+    );
 
 
-    /* PLANE */
+    /* -------------------------
+       MISSILES
+    ------------------------- */
+
+    missiles.forEach(
+        function(missile) {
+
+            drawMissile(
+                missile
+            );
+
+        }
+    );
+
+
+    /* -------------------------
+       PLANE
+    ------------------------- */
 
     drawPlane();
+
 }
 
 
-/* ==============================
-   DRAW PLANE IMAGE
-============================== */
+/* ==================================================
+   DRAW PLANE
+
+   Keeps original image proportions.
+================================================== */
 
 function drawPlane() {
 
-    ctx.save();
+    if (
+        planeImage.complete &&
+        planeImage.naturalWidth > 0
+    ) {
 
-    /*
-       Image is drawn inside a slightly
-       smaller collision-friendly area.
-    */
+        ctx.drawImage(
 
-    ctx.drawImage(
-        planeImage,
-        plane.x,
-        plane.y,
-        plane.width,
-        plane.height
-    );
+            planeImage,
 
-    ctx.restore();
+            plane.x,
+
+            plane.y,
+
+            plane.width,
+
+            plane.height
+
+        );
+
+    }
+
 }
 
 
-/* ==============================
-   DRAW MISSILE IMAGE
-============================== */
+/* ==================================================
+   DRAW MISSILE
+
+   Keeps original missile proportions.
+================================================== */
 
 function drawMissile(missile) {
 
-    ctx.save();
+    if (
+        missileImage.complete &&
+        missileImage.naturalWidth > 0
+    ) {
 
-    ctx.drawImage(
-        missileImage,
-        missile.x,
-        missile.y,
-        missile.width,
-        missile.height
-    );
+        ctx.drawImage(
 
-    ctx.restore();
+            missileImage,
+
+            missile.x,
+
+            missile.y,
+
+            missile.width,
+
+            missile.height
+
+        );
+
+    }
+
 }
 
 
-/* ==============================
+/* ==================================================
    CLOUD
-============================== */
+================================================== */
 
-function drawCloud(x, y, size) {
+function drawCloud(
+    x,
+    y,
+    size
+) {
 
     ctx.save();
 
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
+
+    ctx.fillStyle =
+        "rgba(255,255,255,0.9)";
+
 
     ctx.beginPath();
+
 
     ctx.arc(
         x,
@@ -680,6 +1150,7 @@ function drawCloud(x, y, size) {
         Math.PI * 2
     );
 
+
     ctx.arc(
         x + size * 0.45,
         y - size * 0.15,
@@ -687,6 +1158,7 @@ function drawCloud(x, y, size) {
         0,
         Math.PI * 2
     );
+
 
     ctx.arc(
         x + size * 0.95,
@@ -696,21 +1168,26 @@ function drawCloud(x, y, size) {
         Math.PI * 2
     );
 
+
     ctx.fill();
 
+
     ctx.restore();
+
 }
 
 
-/* ==============================
+/* ==================================================
    COIN
-============================== */
+================================================== */
 
 function drawCoin(coin) {
 
     ctx.save();
 
+
     ctx.beginPath();
+
 
     ctx.arc(
         coin.x,
@@ -720,24 +1197,39 @@ function drawCoin(coin) {
         Math.PI * 2
     );
 
-    ctx.fillStyle = "#ffd700";
+
+    ctx.fillStyle =
+        "#ffd700";
+
 
     ctx.fill();
 
-    ctx.strokeStyle = "#9a6700";
+
+    ctx.strokeStyle =
+        "#9a6700";
+
 
     ctx.lineWidth = 2;
+
 
     ctx.stroke();
 
 
-    ctx.fillStyle = "#5c4300";
+    ctx.fillStyle =
+        "#5c4300";
 
-    ctx.font = "bold 15px Arial";
 
-    ctx.textAlign = "center";
+    ctx.font =
+        "bold 15px Arial";
 
-    ctx.textBaseline = "middle";
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.textBaseline =
+        "middle";
+
 
     ctx.fillText(
         "$",
@@ -745,70 +1237,99 @@ function drawCoin(coin) {
         coin.y
     );
 
+
     ctx.restore();
+
 }
 
 
-/* ==============================
-   RECTANGLE COLLISION
-============================== */
+/* ==================================================
+   COLLISION
+================================================== */
 
-function rectangleCollision(a, b) {
+function rectangleCollision(
+    a,
+    b
+) {
 
-    /*
-       Slightly smaller collision boxes
-       make the game feel fairer.
-    */
+    const planePadding =
+        12;
 
-    const paddingA = 12;
-    const paddingB = 5;
+    const missilePadding =
+        5;
+
 
     return (
 
-        a.x + paddingA <
-        b.x + b.width - paddingB &&
+        a.x +
+        planePadding <
+        b.x +
+        b.width -
+        missilePadding &&
 
-        a.x + a.width - paddingA >
-        b.x + paddingB &&
+        a.x +
+        a.width -
+        planePadding >
+        b.x +
+        missilePadding &&
 
-        a.y + paddingA <
-        b.y + b.height - paddingB &&
+        a.y +
+        planePadding <
+        b.y +
+        b.height -
+        missilePadding &&
 
-        a.y + a.height - paddingA >
-        b.y + paddingB
+        a.y +
+        a.height -
+        planePadding >
+        b.y +
+        missilePadding
+
     );
+
 }
 
 
-/* ==============================
+/* ==================================================
    COIN COLLISION
-============================== */
+================================================== */
 
-function coinCollision(rect, coin) {
+function coinCollision(
+    rect,
+    coin
+) {
 
     const closestX =
         Math.max(
             rect.x,
             Math.min(
                 coin.x,
-                rect.x + rect.width
+                rect.x +
+                rect.width
             )
         );
+
 
     const closestY =
         Math.max(
             rect.y,
             Math.min(
                 coin.y,
-                rect.y + rect.height
+                rect.y +
+                rect.height
             )
         );
 
+
     const dx =
-        coin.x - closestX;
+        coin.x -
+        closestX;
+
 
     const dy =
-        coin.y - closestY;
+        coin.y -
+        closestY;
+
 
     return (
         dx * dx +
@@ -816,51 +1337,67 @@ function coinCollision(rect, coin) {
     ) <
     coin.radius *
     coin.radius;
+
 }
 
 
-/* ==============================
+/* ==================================================
    GAME OVER
-============================== */
+================================================== */
 
 function endGame() {
 
     gameRunning = false;
 
+
     movingUp = false;
+
     movingDown = false;
+
 
     document.getElementById(
         "controls"
-    ).style.display = "none";
+    ).style.display =
+        "none";
+
 
     document.getElementById(
         "finalScore"
-    ).textContent = score;
+    ).textContent =
+        score;
+
 
     document.getElementById(
         "finalCoins"
-    ).textContent = collectedCoins;
+    ).textContent =
+        collectedCoins;
+
 
     document.getElementById(
         "gameOver"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
+
 }
 
 
-/* ==============================
+/* ==================================================
    SCORE
-============================== */
+================================================== */
 
 function updateScore() {
 
     document.getElementById(
         "score"
-    ).textContent = score;
+    ).textContent =
+        score;
+
 
     document.getElementById(
         "coinCount"
-    ).textContent = collectedCoins;
+    ).textContent =
+        collectedCoins;
+
 }
 
 </script></body>
