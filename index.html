@@ -1,272 +1,224 @@
-<!DOCTYPE html><html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0, user-scalable=no">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>737 Sky Escape</title><style>
+<title>737 Sky Escape</title>
 
-/* ==================================================
-   BASIC
-================================================== */
-
+<style>
 * {
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+    margin: 0;
+    padding: 0;
+    touch-action: none;
 }
 
 html,
 body {
-
-    margin: 0;
-    padding: 0;
-
     width: 100%;
     height: 100%;
-
     overflow: hidden;
-
     font-family: Arial, sans-serif;
-
     background: #87ceeb;
 }
 
 canvas {
-
     display: block;
-
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 }
 
-
-/* ==================================================
-   TOP UI
-================================================== */
+/* =========================
+   TOP BAR
+========================= */
 
 #topBar {
-
     position: fixed;
-
     top: 10px;
     left: 10px;
     right: 10px;
 
-    display: flex;
+    z-index: 5;
 
+    display: flex;
     justify-content: space-between;
     align-items: center;
 
-    z-index: 10;
-
     pointer-events: none;
 }
 
-.leftUI {
+#scoreBox,
+#coinBox {
+    background: rgba(0,0,0,0.55);
+    color: white;
 
-    display: flex;
-
-    gap: 8px;
-
-    pointer-events: none;
-}
-
-.info {
-
-    background: rgba(255,255,255,0.94);
-
-    border: 2px solid #111;
-
-    border-radius: 10px;
-
-    padding: 8px 12px;
-
-    font-size: 16px;
-
-    font-weight: bold;
-}
-
-
-/* ==================================================
-   SHOP BUTTON
-================================================== */
-
-#shopButton {
-
-    pointer-events: auto;
-
-    width: 50px;
-    height: 50px;
-
-    border: 2px solid #111;
+    padding: 8px 14px;
 
     border-radius: 12px;
 
-    background: white;
-
-    font-size: 25px;
-
-    cursor: pointer;
-
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    font-size: 17px;
+    font-weight: bold;
 }
 
-
-/* ==================================================
-   START / GAME OVER SCREENS
-================================================== */
-
-.screen {
-
-    position: fixed;
-
-    inset: 0;
-
+#rightUI {
     display: flex;
-
+    gap: 8px;
     align-items: center;
 
-    justify-content: center;
-
-    background: rgba(255,255,255,0.30);
-
-    z-index: 20;
+    pointer-events: auto;
 }
 
-.panel {
+#shopButton {
+    border: none;
 
-    width: 90%;
+    background: rgba(0,0,0,0.65);
+    color: white;
 
-    max-width: 430px;
+    padding: 9px 13px;
 
-    padding: 25px;
+    border-radius: 12px;
 
-    background: white;
+    font-size: 20px;
 
-    border: 3px solid #111;
+    cursor: pointer;
+}
 
-    border-radius: 18px;
+/* =========================
+   MENU / GAME OVER
+========================= */
+
+#menu,
+#gameOver {
+    position: fixed;
+    inset: 0;
+
+    z-index: 10;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     text-align: center;
 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.30);
 }
 
-.panel h1 {
+.menuBox {
+    width: min(90%, 430px);
 
-    margin-top: 0;
+    padding: 28px;
 
-    font-size: 30px;
+    border-radius: 22px;
+
+    background: rgba(255,255,255,0.95);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.35);
 }
 
-.panel p {
-
-    font-size: 17px;
-
-    line-height: 1.5;
+.menuBox h1 {
+    font-size: 34px;
+    margin-bottom: 10px;
 }
 
-.startButton {
+.menuBox p {
+    margin: 8px 0;
+    color: #333;
+}
 
+.savedCoins {
+    font-size: 20px;
+    font-weight: bold;
+
+    margin: 15px 0;
+}
+
+.menuButton {
     width: 100%;
+
+    margin-top: 12px;
 
     padding: 14px;
 
-    margin-top: 10px;
+    border: none;
 
-    border: 2px solid #111;
+    border-radius: 12px;
 
-    border-radius: 10px;
-
-    background: #16a34a;
-
+    background: #1976d2;
     color: white;
 
-    font-size: 19px;
-
+    font-size: 18px;
     font-weight: bold;
 
     cursor: pointer;
 }
 
-#gameOver {
-
-    display: none;
+.menuButton.shop {
+    background: #333;
 }
 
+.menuButton.equipped {
+    background: #2e7d32;
+}
 
-/* ==================================================
-   SHOP WINDOW
-================================================== */
+/* =========================
+   SHOP
+========================= */
 
 #shopWindow {
+    position: fixed;
+    inset: 0;
+
+    z-index: 20;
 
     display: none;
 
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 30;
-
+    justify-content: center;
     align-items: center;
 
-    justify-content: center;
-
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.68);
 }
 
-.shopPanel {
-
-    width: 90%;
-
-    max-width: 440px;
-
-    max-height: 85vh;
+.shopBox {
+    width: min(92%, 520px);
+    max-height: 88vh;
 
     overflow-y: auto;
 
-    background: white;
+    background: #f4f4f4;
 
-    border: 3px solid #111;
+    border-radius: 22px;
 
-    border-radius: 18px;
+    padding: 22px;
 
-    padding: 20px;
-
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    box-shadow:
+        0 10px 50px rgba(0,0,0,0.5);
 }
 
 .shopHeader {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
-    border-bottom: 2px solid #ddd;
-
-    padding-bottom: 12px;
 
     margin-bottom: 15px;
 }
 
 .shopHeader h2 {
-
-    margin: 0;
-
-    font-size: 27px;
+    font-size: 28px;
 }
 
 .closeShop {
+    border: none;
 
-    width: 40px;
-    height: 40px;
+    background: #d32f2f;
+    color: white;
 
-    border: 2px solid #111;
+    width: 38px;
+    height: 38px;
 
-    border-radius: 9px;
-
-    background: #eee;
+    border-radius: 50%;
 
     font-size: 22px;
 
@@ -274,90 +226,95 @@ canvas {
 }
 
 .shopCoins {
+    background: #222;
+    color: #ffd54f;
 
-    background: #fff5bf;
-
-    border: 2px solid #d5ad00;
+    padding: 10px;
 
     border-radius: 10px;
 
-    padding: 12px;
+    margin-bottom: 18px;
 
     text-align: center;
 
     font-weight: bold;
-
-    margin-bottom: 18px;
 }
 
-.shopTitle {
-
-    font-size: 20px;
-
+.sectionTitle {
+    font-size: 22px;
     font-weight: bold;
 
-    margin-bottom: 10px;
+    margin: 15px 0 10px;
 }
 
-.shopItem {
+.skinCard {
+    background: white;
+
+    border: 2px solid #ccc;
+
+    border-radius: 15px;
+
+    padding: 14px;
+
+    margin-bottom: 12px;
+
+    text-align: center;
+}
+
+.skinCard h3 {
+    margin-bottom: 10px;
+    font-size: 21px;
+}
+
+.skinPreview {
+    width: 100%;
+    height: 140px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            #79c8ff,
+            #d9f2ff
+        );
 
     display: flex;
 
     align-items: center;
+    justify-content: center;
 
-    justify-content: space-between;
+    overflow: hidden;
 
-    gap: 10px;
-
-    padding: 15px;
-
-    margin-bottom: 10px;
-
-    border: 2px solid #ccc;
-
-    border-radius: 12px;
-
-    background: #f7f7f7;
+    margin-bottom: 12px;
 }
 
-.shopItemName {
+.skinPreview img {
+    max-width: 92%;
+    max-height: 120px;
+
+    object-fit: contain;
+}
+
+.skinFallback {
+    color: #555;
+    font-weight: bold;
+}
+
+.equippedText {
+    display: none;
+
+    margin-top: 9px;
+
+    color: #2e7d32;
 
     font-weight: bold;
-
-    font-size: 17px;
 }
 
-.comingSoon {
-
-    opacity: 0.45;
-
-    filter: grayscale(100%);
-}
-
-.comingSoonBadge {
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    background: #999;
-
-    color: white;
-
-    padding: 6px 8px;
-
-    border-radius: 7px;
-
-    white-space: nowrap;
-}
-
-
-/* ==================================================
+/* =========================
    MOBILE CONTROLS
-================================================== */
+========================= */
 
-#controls {
-
+#mobileControls {
     position: fixed;
 
     bottom: 20px;
@@ -365,234 +322,285 @@ canvas {
     left: 0;
     right: 0;
 
-    display: none;
+    z-index: 6;
+
+    display: flex;
 
     justify-content: space-between;
 
-    padding: 0 25px;
-
-    z-index: 15;
+    padding: 0 20px;
 
     pointer-events: none;
 }
 
 .controlButton {
+    width: 65px;
+    height: 65px;
 
-    width: 78px;
-    height: 68px;
+    border-radius: 50%;
 
-    border: 2px solid #111;
+    border: none;
 
-    border-radius: 14px;
+    background: rgba(0,0,0,0.45);
 
-    background: rgba(255,255,255,0.90);
+    color: white;
 
-    font-size: 30px;
+    font-size: 28px;
 
     pointer-events: auto;
-
-    touch-action: none;
 }
+</style>
+</head>
 
-</style></head><body><canvas id="gameCanvas"></canvas>
+<body>
 
-<!-- ==================================================
+<canvas id="gameCanvas"></canvas>
+
+<!-- =========================
      TOP UI
-================================================== --><div id="topBar"><div class="leftUI">
+========================= -->
 
-    <div class="info">
+<div id="topBar">
 
-        Score:
-        <span id="score">0</span>
-
+    <div id="scoreBox">
+        Score: 0
     </div>
 
-    <div class="info">
+    <div id="rightUI">
 
-        🪙
-        <span id="savedCoins">0</span>
+        <div id="coinBox">
+            🪙 0
+        </div>
 
-    </div>
-
-</div>
-
-
-<button
-    id="shopButton"
-    onclick="openShop()">
-
-    🛒
-
-</button>
-
-</div><!-- ==================================================
-     MOBILE CONTROLS
-================================================== --><div id="controls"><button
-    class="controlButton"
-    id="upButton">
-
-    ⬆️
-
-</button>
-
-
-<button
-    class="controlButton"
-    id="downButton">
-
-    ⬇️
-
-</button>
-
-</div><!-- ==================================================
-     START SCREEN
-================================================== --><div id="startScreen"
-     class="screen"><div class="panel">
-
-    <h1>
-        ✈️ 737 SKY ESCAPE
-    </h1>
-
-    <p>
-
-        Fly the Boeing 737,
-        avoid missiles,
-        collect coins and survive.
-
-    </p>
-
-    <p>
-
-        Your coins are saved
-        between games.
-
-    </p>
-
-    <p>
-
-        🪙 Saved Coins:
-        <strong id="startCoins">0</strong>
-
-    </p>
-
-    <button
-        class="startButton"
-        onclick="startGame()">
-
-        START GAME
-
-    </button>
-
-</div>
-
-</div><!-- ==================================================
-     GAME OVER
-================================================== --><div id="gameOver"
-     class="screen"><div class="panel">
-
-    <h1>
-        💥 GAME OVER
-    </h1>
-
-    <p>
-
-        Score:
-        <strong id="finalScore">0</strong>
-
-    </p>
-
-    <p>
-
-        Coins this run:
-        <strong id="runCoins">0</strong>
-
-    </p>
-
-    <p>
-
-        🪙 Total saved coins:
-        <strong id="finalCoins">0</strong>
-
-    </p>
-
-    <button
-        class="startButton"
-        onclick="startGame()">
-
-        PLAY AGAIN
-
-    </button>
-
-    <button
-        class="startButton"
-        style="background:#555;"
-        onclick="openShop()">
-
-        🛒 SHOP
-
-    </button>
-
-</div>
-
-</div><!-- ==================================================
-     SHOP WINDOW
-================================================== --><div id="shopWindow"><div class="shopPanel">
-
-    <div class="shopHeader">
-
-        <h2>
-            🛒 SHOP
-        </h2>
-
-        <button
-            class="closeShop"
-            onclick="closeShop()">
-
-            ✕
-
+        <button id="shopButton">
+            🛒
         </button>
 
     </div>
 
+</div>
 
-    <div class="shopCoins">
+<!-- =========================
+     MAIN MENU
+========================= -->
 
-        🪙 Your Coins:
-        <span id="shopCoins">0</span>
+<div id="menu">
+
+    <div class="menuBox">
+
+        <h1>
+            ✈️ 737 Sky Escape
+        </h1>
+
+        <p>
+            Avoid the missiles and collect the coins!
+        </p>
+
+        <div class="savedCoins">
+            🪙 Saved Coins:
+            <span id="menuCoins">0</span>
+        </div>
+
+        <button
+            class="menuButton"
+            id="startButton">
+            ▶ PLAY
+        </button>
+
+        <button
+            class="menuButton shop"
+            id="menuShopButton">
+            🛒 SHOP
+        </button>
 
     </div>
 
+</div>
 
-    <div class="shopTitle">
+<!-- =========================
+     GAME OVER
+========================= -->
 
-        ✈️ Planes
+<div
+    id="gameOver"
+    style="display:none;">
+
+    <div class="menuBox">
+
+        <h1>
+            GAME OVER
+        </h1>
+
+        <p>
+            Score:
+            <strong id="finalScore">0</strong>
+        </p>
+
+        <p>
+            Coins this run:
+            <strong id="runCoins">0</strong>
+        </p>
+
+        <div class="savedCoins">
+            🪙 Total Saved Coins:
+            <span id="gameOverCoins">0</span>
+        </div>
+
+        <button
+            class="menuButton"
+            id="restartButton">
+            ▶ PLAY AGAIN
+        </button>
+
+        <button
+            class="menuButton shop"
+            id="gameOverShopButton">
+            🛒 SHOP
+        </button>
 
     </div>
 
+</div>
 
-    <div class="shopItem comingSoon">
+<!-- =========================
+     SHOP
+========================= -->
 
-        <div>
+<div id="shopWindow">
 
-            <div class="shopItemName">
+    <div class="shopBox">
 
-                737 Skins
+        <div class="shopHeader">
+
+            <h2>
+                🛒 SHOP
+            </h2>
+
+            <button
+                class="closeShop"
+                id="closeShopButton">
+                ×
+            </button>
+
+        </div>
+
+        <div class="shopCoins">
+            🪙 Saved Coins:
+            <span id="shopCoins">0</span>
+        </div>
+
+        <div class="sectionTitle">
+            ✈️ Planes
+        </div>
+
+        <div class="sectionTitle">
+            737 Skins
+        </div>
+
+        <!-- =========================
+             DEFAULT PLANE
+        ========================= -->
+
+        <div class="skinCard">
+
+            <h3>
+                Default 737
+            </h3>
+
+            <div class="skinPreview">
+
+                <img
+                    src="plane.png"
+                    alt="Default 737"
+                    onerror="
+                        this.style.display='none';
+                        this.nextElementSibling.style.display='block';
+                    "
+                >
+
+                <span
+                    class="skinFallback"
+                    style="display:none;">
+                    plane.png not found
+                </span>
 
             </div>
 
-            <div>
+            <button
+                class="menuButton"
+                id="equipDefaultButton">
 
-                More aircraft skins
-                will be available later.
+                EQUIP DEFAULT
+
+            </button>
+
+            <div
+                class="equippedText"
+                id="defaultEquippedText">
+
+                ✓ EQUIPPED
 
             </div>
 
         </div>
 
+        <!-- =========================
+             SKIN1
+        ========================= -->
 
-        <div class="comingSoonBadge">
+        <div class="skinCard">
 
-            COMING SOON
+            <h3>
+                Skin1
+            </h3>
+
+            <div class="skinPreview">
+
+                <!--
+                    YOUR FUTURE SKIN IMAGE
+
+                    Upload:
+                    skin1.png
+
+                    to the same folder as index.html.
+                -->
+
+                <img
+                    src="skin1.png"
+                    alt="Skin1"
+                    id="skin1Preview"
+                    onerror="
+                        this.style.display='none';
+                        document.getElementById('skin1Fallback').style.display='block';
+                    "
+                >
+
+                <span
+                    id="skin1Fallback"
+                    class="skinFallback"
+                    style="display:none;">
+
+                    Upload skin1.png
+
+                </span>
+
+            </div>
+
+            <button
+                class="menuButton"
+                id="equipSkin1Button">
+
+                EQUIP SKIN1
+
+            </button>
+
+            <div
+                class="equippedText"
+                id="skin1EquippedText">
+
+                ✓ EQUIPPED
+
+            </div>
 
         </div>
 
@@ -600,11 +608,31 @@ canvas {
 
 </div>
 
-</div><script>
+<!-- =========================
+     MOBILE CONTROLS
+========================= -->
 
-/* ==================================================
+<div id="mobileControls">
+
+    <button
+        class="controlButton"
+        id="upButton">
+        ▲
+    </button>
+
+    <button
+        class="controlButton"
+        id="downButton">
+        ▼
+    </button>
+
+</div>
+
+<script>
+
+/* =====================================================
    CANVAS
-================================================== */
+===================================================== */
 
 const canvas =
     document.getElementById(
@@ -614,31 +642,49 @@ const canvas =
 const ctx =
     canvas.getContext("2d");
 
+let W =
+    window.innerWidth;
 
-function resizeCanvas() {
+let H =
+    window.innerHeight;
 
-    canvas.width =
-        window.innerWidth;
-
-    canvas.height =
-        window.innerHeight;
-
-}
+canvas.width = W;
+canvas.height = H;
 
 
-resizeCanvas();
-
+/* =====================================================
+   RESIZE
+===================================================== */
 
 window.addEventListener(
     "resize",
-    resizeCanvas
+    () => {
+
+        W = window.innerWidth;
+        H = window.innerHeight;
+
+        canvas.width = W;
+        canvas.height = H;
+
+        if (
+            plane.y >
+            H - plane.height
+        ) {
+
+            plane.y =
+                H - plane.height;
+        }
+    }
 );
 
 
-/* ==================================================
+/* =====================================================
    IMAGES
-================================================== */
+===================================================== */
 
+/*
+    DEFAULT AIRCRAFT
+*/
 const planeImage =
     new Image();
 
@@ -646,6 +692,21 @@ planeImage.src =
     "plane.png";
 
 
+/*
+    SEPARATE SKIN1 AIRCRAFT
+
+    This is NOT plane.png.
+*/
+const skin1Image =
+    new Image();
+
+skin1Image.src =
+    "skin1.png";
+
+
+/*
+    MISSILE
+*/
 const missileImage =
     new Image();
 
@@ -653,57 +714,103 @@ missileImage.src =
     "missile.png";
 
 
-/* ==================================================
-   SAVED COINS
-================================================== */
-
-let savedCoins =
-    Number(
-        localStorage.getItem(
-            "skyEscapeCoins"
-        )
-    ) || 0;
-
-
-/* ==================================================
-   GAME VARIABLES
-================================================== */
-
-let gameRunning = false;
-
-let score = 0;
-
-let collectedCoins = 0;
-
-let missiles = [];
-
-let coins = [];
-
-let clouds = [];
-
-
-/* ==================================================
-   SPEED SYSTEM
-================================================== */
+/* =====================================================
+   SKIN SYSTEM
+===================================================== */
 
 /*
-   The game starts at normal speed.
+    Possible values:
 
-   Every few seconds the speed increases.
-
-   It is capped so the game remains playable.
+    "default"
+    "skin1"
 */
 
-let gameSpeed = 1;
+let selectedSkin =
+    localStorage.getItem(
+        "selected737Skin"
+    ) || "default";
 
-let speedTimer = 0;
 
-const maximumSpeed = 2.5;
+function getSelectedPlaneImage() {
+
+    if (
+        selectedSkin === "skin1"
+    ) {
+
+        /*
+            If skin1.png exists,
+            use it.
+        */
+
+        if (
+            skin1Image.complete &&
+            skin1Image.naturalWidth > 0
+        ) {
+
+            return skin1Image;
+        }
+
+    }
+
+    /*
+        Otherwise use the default.
+    */
+
+    return planeImage;
+}
 
 
-/* ==================================================
+/* =====================================================
+   SAVED COINS
+===================================================== */
+
+let savedCoins =
+    parseInt(
+        localStorage.getItem(
+            "skyEscapeCoins"
+        ) || "0"
+    );
+
+
+function saveCoins() {
+
+    localStorage.setItem(
+        "skyEscapeCoins",
+        savedCoins.toString()
+    );
+}
+
+
+function updateSavedCoinUI() {
+
+    document.getElementById(
+        "menuCoins"
+    ).textContent =
+        savedCoins;
+
+    document.getElementById(
+        "gameOverCoins"
+    ).textContent =
+        savedCoins;
+
+    document.getElementById(
+        "shopCoins"
+    ).textContent =
+        savedCoins;
+
+    document.getElementById(
+        "coinBox"
+    ).textContent =
+        "🪙 " + savedCoins;
+}
+
+
+updateSavedCoinUI();
+
+
+/* =====================================================
    PLANE
-================================================== */
+===================================================== */
 
 const plane = {
 
@@ -719,911 +826,577 @@ const plane = {
 
     height: 75,
 
-    speed: 6
+    baseSpeed: 5.5,
 
+    speed: 5.5
 };
 
 
-/* ==================================================
-   PLANE IMAGE SIZE
-================================================== */
+/*
+    Keep aircraft proportions.
+*/
 
 function calculatePlaneSize() {
 
+    const image =
+        getSelectedPlaneImage();
+
     if (
-
-        planeImage.naturalWidth > 0 &&
-
-        planeImage.naturalHeight > 0
-
+        image.naturalWidth > 0 &&
+        image.naturalHeight > 0
     ) {
 
         const ratio =
-
-            planeImage.naturalWidth /
-            planeImage.naturalHeight;
-
+            image.naturalWidth /
+            image.naturalHeight;
 
         plane.width =
             plane.maxWidth;
 
-
         plane.height =
-            plane.width /
-            ratio;
-
+            plane.width / ratio;
 
         if (
-
             plane.height >
             plane.maxHeight
-
         ) {
 
             plane.height =
                 plane.maxHeight;
 
-
             plane.width =
-                plane.height *
-                ratio;
-
+                plane.height * ratio;
         }
-
     }
-
 }
 
+
+/*
+    Recalculate when either
+    aircraft image loads.
+*/
 
 planeImage.onload =
     calculatePlaneSize;
 
+skin1Image.onload =
+    calculatePlaneSize;
 
-/* ==================================================
-   MISSILE SIZE
-================================================== */
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let score = 0;
+
+let runCoins = 0;
+
+let gameRunning = false;
+
+let missiles = [];
+
+let coins = [];
+
+let clouds = [];
+
+let frameCount = 0;
+
+
+/* =====================================================
+   DIFFICULTY
+===================================================== */
+
+/*
+    Starts at 1.0.
+
+    Maximum is 1.7.
+
+    This gives gradual increases
+    without making the game unfair.
+*/
+
+let gameSpeed = 1;
+
+const maximumSpeed = 1.7;
+
+
+/* =====================================================
+   TIME OF DAY
+===================================================== */
+
+/*
+    Day:
+        30 seconds
+
+    Afternoon:
+        30 seconds
+
+    Night:
+        30 seconds
+
+    Total:
+        90 seconds
+
+    Then the cycle repeats.
+*/
+
+let timeOfDayTimer = 0;
+
+const dayLength =
+    30 * 60;
+
+const afternoonLength =
+    30 * 60;
+
+const nightLength =
+    30 * 60;
+
+
+function getTimeOfDay() {
+
+    const cycleLength =
+        dayLength +
+        afternoonLength +
+        nightLength;
+
+    const t =
+        timeOfDayTimer %
+        cycleLength;
+
+    if (
+        t < dayLength
+    ) {
+
+        return "day";
+    }
+
+    if (
+        t <
+        dayLength +
+        afternoonLength
+    ) {
+
+        return "afternoon";
+    }
+
+    return "night";
+}
+
+
+/* =====================================================
+   SKY
+===================================================== */
+
+function drawSky() {
+
+    const time =
+        getTimeOfDay();
+
+    let topColor;
+    let bottomColor;
+
+
+    if (
+        time === "day"
+    ) {
+
+        topColor =
+            "#4facfe";
+
+        bottomColor =
+            "#b9e7ff";
+
+    }
+
+    else if (
+        time === "afternoon"
+    ) {
+
+        topColor =
+            "#e78b61";
+
+        bottomColor =
+            "#ffd194";
+
+    }
+
+    else {
+
+        topColor =
+            "#07152f";
+
+        bottomColor =
+            "#1b3158";
+    }
+
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            H
+        );
+
+    gradient.addColorStop(
+        0,
+        topColor
+    );
+
+    gradient.addColorStop(
+        1,
+        bottomColor
+    );
+
+    ctx.fillStyle =
+        gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+
+    drawSunOrMoon(
+        time
+    );
+}
+
+
+/* =====================================================
+   SUN / MOON
+===================================================== */
+
+function drawSunOrMoon(
+    time
+) {
+
+    if (
+        time === "day"
+    ) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            W - 100,
+            100,
+            42,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "#fff4a3";
+
+        ctx.fill();
+
+    }
+
+    else if (
+        time === "afternoon"
+    ) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            W - 110,
+            H * 0.30,
+            38,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "#ffcf66";
+
+        ctx.fill();
+
+    }
+
+    else {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            W - 110,
+            100,
+            35,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "#f4f1c9";
+
+        ctx.fill();
+
+
+        /*
+            Stars
+        */
+
+        ctx.fillStyle =
+            "rgba(255,255,255,0.8)";
+
+        for (
+            let i = 0;
+            i < 30;
+            i++
+        ) {
+
+            const x =
+                (i * 97) % W;
+
+            const y =
+                (i * 53) %
+                (H * 0.65);
+
+            ctx.fillRect(
+                x,
+                y,
+                2,
+                2
+            );
+        }
+    }
+}
+
+
+/* =====================================================
+   CLOUDS
+===================================================== */
+
+function createCloud(
+    x,
+    y
+) {
+
+    return {
+
+        x: x,
+
+        y: y,
+
+        size:
+            30 +
+            Math.random() * 35,
+
+        speed:
+            0.7 +
+            Math.random() * 0.6
+    };
+}
+
+
+function createClouds() {
+
+    clouds = [];
+
+    for (
+        let i = 0;
+        i < 7;
+        i++
+    ) {
+
+        clouds.push(
+            createCloud(
+                Math.random() * W,
+                60 +
+                Math.random() *
+                H * 0.55
+            )
+        );
+    }
+}
+
+
+function updateClouds() {
+
+    for (
+        const cloud of clouds
+    ) {
+
+        cloud.x -=
+            cloud.speed *
+            gameSpeed;
+
+        if (
+            cloud.x <
+            -150
+        ) {
+
+            cloud.x =
+                W + 100;
+
+            cloud.y =
+                50 +
+                Math.random() *
+                H * 0.55;
+        }
+    }
+}
+
+
+function drawCloud(
+    cloud
+) {
+
+    const alpha =
+        getTimeOfDay() === "night"
+        ? 0.20
+        : 0.65;
+
+    ctx.fillStyle =
+        `rgba(255,255,255,${alpha})`;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        cloud.x,
+        cloud.y,
+        cloud.size * 0.55,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.arc(
+        cloud.x +
+        cloud.size * 0.55,
+        cloud.y - 10,
+        cloud.size * 0.7,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.arc(
+        cloud.x +
+        cloud.size,
+        cloud.y,
+        cloud.size * 0.5,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+}
+
+
+/* =====================================================
+   MISSILES
+===================================================== */
 
 function getMissileSize() {
 
+    let width = 75;
+
+    let height = 35;
+
+
     if (
-
         missileImage.naturalWidth > 0 &&
-
         missileImage.naturalHeight > 0
-
     ) {
 
         const ratio =
-
             missileImage.naturalWidth /
             missileImage.naturalHeight;
 
+        height =
+            width / ratio;
 
-        const width = 75;
+        if (
+            height > 45
+        ) {
 
+            height = 45;
 
-        return {
-
-            width: width,
-
-            height:
-                Math.max(
-                    20,
-                    Math.min(
-                        width / ratio,
-                        45
-                    )
-                )
-
-        };
-
+            width =
+                height * ratio;
+        }
     }
 
 
     return {
-
-        width: 75,
-
-        height: 30
-
+        width,
+        height
     };
-
 }
 
 
-/* ==================================================
-   CONTROLS
-================================================== */
+function spawnMissile() {
 
-let movingUp = false;
-
-let movingDown = false;
+    const size =
+        getMissileSize();
 
 
-/* ==================================================
-   KEYBOARD
-================================================== */
+    missiles.push({
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+        x:
+            W + 80,
 
-        if (
-            event.key ===
-            "ArrowUp"
-        ) {
+        y:
+            50 +
+            Math.random() *
+            Math.max(
+                50,
+                H - 130
+            ),
 
-            event.preventDefault();
+        width:
+            size.width,
 
-            movingUp = true;
+        height:
+            size.height,
 
-        }
-
-
-        if (
-            event.key ===
-            "ArrowDown"
-        ) {
-
-            event.preventDefault();
-
-            movingDown = true;
-
-        }
-
-    }
-);
-
-
-document.addEventListener(
-    "keyup",
-    function(event) {
-
-        if (
-            event.key ===
-            "ArrowUp"
-        ) {
-
-            movingUp = false;
-
-        }
-
-
-        if (
-            event.key ===
-            "ArrowDown"
-        ) {
-
-            movingDown = false;
-
-        }
-
-    }
-);
-
-
-/* ==================================================
-   MOBILE BUTTONS
-================================================== */
-
-const upButton =
-    document.getElementById(
-        "upButton"
-    );
-
-const downButton =
-    document.getElementById(
-        "downButton"
-    );
-
-
-function startUp(event) {
-
-    event.preventDefault();
-
-    movingUp = true;
-
+        speed:
+            4.0 +
+            Math.random() * 1.5
+    });
 }
 
 
-function stopUp(event) {
-
-    event.preventDefault();
-
-    movingUp = false;
-
-}
-
-
-function startDown(event) {
-
-    event.preventDefault();
-
-    movingDown = true;
-
-}
-
-
-function stopDown(event) {
-
-    event.preventDefault();
-
-    movingDown = false;
-
-}
-
-
-upButton.addEventListener(
-    "pointerdown",
-    startUp
-);
-
-upButton.addEventListener(
-    "pointerup",
-    stopUp
-);
-
-upButton.addEventListener(
-    "pointercancel",
-    stopUp
-);
-
-upButton.addEventListener(
-    "pointerleave",
-    stopUp
-);
-
-
-downButton.addEventListener(
-    "pointerdown",
-    startDown
-);
-
-downButton.addEventListener(
-    "pointerup",
-    stopDown
-);
-
-downButton.addEventListener(
-    "pointercancel",
-    stopDown
-);
-
-downButton.addEventListener(
-    "pointerleave",
-    stopDown
-);
-
-
-/* ==================================================
-   UPDATE SAVED COIN UI
-================================================== */
-
-function updateSavedCoinUI() {
-
-    document.getElementById(
-        "savedCoins"
-    ).textContent =
-        savedCoins;
-
-
-    document.getElementById(
-        "startCoins"
-    ).textContent =
-        savedCoins;
-
-
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        savedCoins;
-
-}
-
-
-/* ==================================================
-   SAVE COINS
-================================================== */
-
-function saveCoins() {
-
-    localStorage.setItem(
-        "skyEscapeCoins",
-        savedCoins
-    );
-
-}
-
-
-/* ==================================================
-   START GAME
-================================================== */
-
-function startGame() {
-
-    score = 0;
-
-    collectedCoins = 0;
-
-    missiles = [];
-
-    coins = [];
-
-    clouds = [];
-
-
-    gameSpeed = 1;
-
-    speedTimer = 0;
-
-
-    calculatePlaneSize();
-
-
-    plane.y =
-        canvas.height / 2 -
-        plane.height / 2;
-
-
-    gameRunning = true;
-
-
-    document.getElementById(
-        "startScreen"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "gameOver"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "controls"
-    ).style.display =
-        "flex";
-
-
-    updateSavedCoinUI();
-
-    updateScore();
-
-
-    requestAnimationFrame(
-        gameLoop
-    );
-
-}
-
-
-/* ==================================================
-   GAME LOOP
-================================================== */
-
-function gameLoop() {
-
-    if (!gameRunning) {
-
-        return;
-
-    }
-
-
-    updateGame();
-
-    drawGame();
-
-
-    requestAnimationFrame(
-        gameLoop
-    );
-
-}
-
-
-/* ==================================================
-   UPDATE GAME
-================================================== */
-
-function updateGame() {
-
-
-    /* ==================================================
-       GRADUALLY INCREASE SPEED
-    ================================================== */
-
-    speedTimer++;
-
-
-    /*
-       Approximately every 10 seconds,
-       increase the game speed.
-    */
-
-    if (
-        speedTimer >=
-        600
-    ) {
-
-        speedTimer = 0;
-
-
-        gameSpeed += 0.15;
-
-
-        if (
-            gameSpeed >
-            maximumSpeed
-        ) {
-
-            gameSpeed =
-                maximumSpeed;
-
-        }
-
-    }
-
-
-    /* ==================================================
-       PLANE MOVEMENT
-    ================================================== */
-
-    if (movingUp) {
-
-        plane.y -=
-            plane.speed;
-
-    }
-
-
-    if (movingDown) {
-
-        plane.y +=
-            plane.speed;
-
-    }
-
-
-    /* ==================================================
-       SCREEN LIMIT
-    ================================================== */
-
-    if (
-        plane.y < 10
-    ) {
-
-        plane.y = 10;
-
-    }
-
-
-    if (
-        plane.y +
-        plane.height >
-        canvas.height - 10
-    ) {
-
-        plane.y =
-            canvas.height -
-            plane.height -
-            10;
-
-    }
-
-
-    /* ==================================================
-       CLOUDS
-    ================================================== */
-
-    if (
-        Math.random() <
-        0.025
-    ) {
-
-        clouds.push({
-
-            x:
-                canvas.width + 100,
-
-            y:
-                40 +
-                Math.random() *
-                Math.max(
-                    50,
-                    canvas.height - 100
-                ),
-
-            size:
-                25 +
-                Math.random() * 35,
-
-            speed:
-                (
-                    1 +
-                    Math.random() * 1.5
-                ) *
-                gameSpeed
-
-        });
-
-    }
-
-
-    clouds.forEach(
-        function(cloud) {
-
-            cloud.x -=
-                cloud.speed;
-
-        }
-    );
-
-
-    clouds =
-        clouds.filter(
-            function(cloud) {
-
-                return (
-                    cloud.x >
-                    -180
-                );
-
-            }
-        );
-
-
-    /* ==================================================
-       MISSILES
-    ================================================== */
-
-    if (
-        Math.random() <
-        0.014
-    ) {
-
-        const size =
-            getMissileSize();
-
-
-        missiles.push({
-
-            x:
-                canvas.width + 80,
-
-            y:
-                40 +
-                Math.random() *
-                Math.max(
-                    50,
-                    canvas.height - 100
-                ),
-
-            width:
-                size.width,
-
-            height:
-                size.height,
-
-            speed:
-                (
-                    4 +
-                    Math.random() * 3
-                ) *
-                gameSpeed
-
-        });
-
-    }
-
-
-    missiles.forEach(
-        function(missile) {
-
-            missile.x -=
-                missile.speed;
-
-        }
-    );
-
-
-    missiles =
-        missiles.filter(
-            function(missile) {
-
-                return (
-                    missile.x >
-                    -120
-                );
-
-            }
-        );
-
-
-    /* ==================================================
-       COINS
-    ================================================== */
-
-    if (
-        Math.random() <
-        0.02
-    ) {
-
-        coins.push({
-
-            x:
-                canvas.width + 40,
-
-            y:
-                50 +
-                Math.random() *
-                Math.max(
-                    50,
-                    canvas.height - 120
-                ),
-
-            radius: 14,
-
-            speed:
-                3 *
-                gameSpeed
-
-        });
-
-    }
-
-
-    coins.forEach(
-        function(coin) {
-
-            coin.x -=
-                coin.speed;
-
-        }
-    );
-
-
-    coins =
-        coins.filter(
-            function(coin) {
-
-                return (
-                    coin.x >
-                    -60
-                );
-
-            }
-        );
-
-
-    /* ==================================================
-       MISSILE COLLISION
-    ================================================== */
-
-    for (
-        let i = 0;
-        i < missiles.length;
-        i++
-    ) {
-
-        if (
-            rectangleCollision(
-                plane,
-                missiles[i]
-            )
-        ) {
-
-            endGame();
-
-            return;
-
-        }
-
-    }
-
-
-    /* ==================================================
-       COIN COLLECTION
-    ================================================== */
+function updateMissiles() {
 
     for (
         let i =
-            coins.length - 1;
+            missiles.length - 1;
 
         i >= 0;
 
         i--
     ) {
 
+        const missile =
+            missiles[i];
+
+        missile.x -=
+            missile.speed *
+            gameSpeed;
+
+
         if (
-            coinCollision(
-                plane,
-                coins[i]
-            )
+            missile.x <
+            -missile.width - 30
         ) {
 
-            collectedCoins++;
-
-            savedCoins++;
-
-
-            /*
-               Immediately save the coin,
-               so it isn't lost if the page closes.
-            */
-
-            saveCoins();
-
-            updateSavedCoinUI();
-
-
-            score += 25;
-
-
-            coins.splice(
+            missiles.splice(
                 i,
                 1
             );
-
         }
-
     }
-
-
-    /* ==================================================
-       SCORE
-    ================================================== */
-
-    score++;
-
-    updateScore();
-
 }
 
-
-/* ==================================================
-   DRAW GAME
-================================================== */
-
-function drawGame() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /* SKY */
-
-    const skyGradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            canvas.height
-        );
-
-
-    skyGradient.addColorStop(
-        0,
-        "#4facfe"
-    );
-
-
-    skyGradient.addColorStop(
-        1,
-        "#d9f3ff"
-    );
-
-
-    ctx.fillStyle =
-        skyGradient;
-
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /* CLOUDS */
-
-    clouds.forEach(
-        function(cloud) {
-
-            drawCloud(
-                cloud.x,
-                cloud.y,
-                cloud.size
-            );
-
-        }
-    );
-
-
-    /* COINS */
-
-    coins.forEach(
-        function(coin) {
-
-            drawCoin(coin);
-
-        }
-    );
-
-
-    /* MISSILES */
-
-    missiles.forEach(
-        function(missile) {
-
-            drawMissile(
-                missile
-            );
-
-        }
-    );
-
-
-    /* PLANE */
-
-    drawPlane();
-
-}
-
-
-/* ==================================================
-   DRAW PLANE
-================================================== */
-
-function drawPlane() {
-
-    if (
-
-        planeImage.complete &&
-
-        planeImage.naturalWidth > 0
-
-    ) {
-
-        ctx.drawImage(
-
-            planeImage,
-
-            plane.x,
-
-            plane.y,
-
-            plane.width,
-
-            plane.height
-
-        );
-
-    }
-
-}
-
-
-/* ==================================================
-   DRAW MISSILE
-================================================== */
 
 function drawMissile(
     missile
 ) {
 
     if (
-
         missileImage.complete &&
-
         missileImage.naturalWidth > 0
-
     ) {
 
         ctx.drawImage(
@@ -1637,318 +1410,492 @@ function drawMissile(
             missile.width,
 
             missile.height
-
         );
 
     }
 
+    else {
+
+        ctx.fillStyle =
+            "#555";
+
+        ctx.fillRect(
+
+            missile.x,
+
+            missile.y,
+
+            missile.width,
+
+            missile.height
+        );
+    }
 }
 
 
-/* ==================================================
-   CLOUD
-================================================== */
+/* =====================================================
+   COINS
+===================================================== */
 
-function drawCloud(
-    x,
-    y,
-    size
-) {
+function spawnCoin() {
 
-    ctx.save();
+    coins.push({
 
+        x:
+            W + 40,
 
-    ctx.fillStyle =
-        "rgba(255,255,255,0.9)";
+        y:
+            60 +
+            Math.random() *
+            Math.max(
+                50,
+                H - 140
+            ),
 
+        radius:
+            13,
 
-    ctx.beginPath();
-
-
-    ctx.arc(
-        x,
-        y,
-        size * 0.45,
-        0,
-        Math.PI * 2
-    );
-
-
-    ctx.arc(
-        x + size * 0.45,
-        y - size * 0.15,
-        size * 0.6,
-        0,
-        Math.PI * 2
-    );
-
-
-    ctx.arc(
-        x + size * 0.95,
-        y,
-        size * 0.45,
-        0,
-        Math.PI * 2
-    );
-
-
-    ctx.fill();
-
-
-    ctx.restore();
-
+        speed:
+            3.0 +
+            Math.random()
+    });
 }
 
 
-/* ==================================================
-   COIN
-================================================== */
+function updateCoins() {
+
+    for (
+        let i =
+            coins.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const coin =
+            coins[i];
+
+        coin.x -=
+            coin.speed *
+            gameSpeed;
+
+
+        if (
+            coin.x <
+            -40
+        ) {
+
+            coins.splice(
+                i,
+                1
+            );
+        }
+    }
+}
+
 
 function drawCoin(
     coin
 ) {
 
-    ctx.save();
-
-
     ctx.beginPath();
-
 
     ctx.arc(
 
         coin.x,
+
         coin.y,
+
         coin.radius,
+
         0,
+
         Math.PI * 2
-
     );
-
 
     ctx.fillStyle =
         "#ffd700";
 
-
     ctx.fill();
 
-
     ctx.strokeStyle =
-        "#9a6700";
+        "#b8860b";
 
-
-    ctx.lineWidth = 2;
-
+    ctx.lineWidth =
+        2;
 
     ctx.stroke();
 
 
     ctx.fillStyle =
-        "#5c4300";
-
+        "#8b6508";
 
     ctx.font =
-        "bold 15px Arial";
-
+        "bold 14px Arial";
 
     ctx.textAlign =
         "center";
 
-
     ctx.textBaseline =
         "middle";
-
 
     ctx.fillText(
         "$",
         coin.x,
-        coin.y
+        coin.y + 1
     );
-
-
-    ctx.restore();
-
 }
 
 
-/* ==================================================
+/* =====================================================
    COLLISION
-================================================== */
+===================================================== */
 
-function rectangleCollision(
+function collision(
     a,
     b
 ) {
 
-    const planePadding =
-        12;
-
-    const missilePadding =
-        5;
-
+    const padding = 10;
 
     return (
 
-        a.x +
-        planePadding <
+        a.x + padding <
         b.x +
         b.width -
-        missilePadding &&
+        padding &&
 
         a.x +
         a.width -
-        planePadding >
+        padding >
         b.x +
-        missilePadding &&
+        padding &&
 
-        a.y +
-        planePadding <
+        a.y + padding <
         b.y +
         b.height -
-        missilePadding &&
+        padding &&
 
         a.y +
         a.height -
-        planePadding >
+        padding >
         b.y +
-        missilePadding
-
+        padding
     );
-
 }
 
 
-/* ==================================================
-   COIN COLLISION
-================================================== */
-
-function coinCollision(
-    rect,
+function collectCoin(
     coin
 ) {
 
-    const closestX =
-        Math.max(
-            rect.x,
-            Math.min(
-                coin.x,
-                rect.x +
-                rect.width
-            )
-        );
-
-
-    const closestY =
-        Math.max(
-            rect.y,
-            Math.min(
-                coin.y,
-                rect.y +
-                rect.height
-            )
-        );
-
-
     const dx =
-        coin.x -
-        closestX;
-
+        plane.x +
+        plane.width / 2 -
+        coin.x;
 
     const dy =
-        coin.y -
-        closestY;
+        plane.y +
+        plane.height / 2 -
+        coin.y;
 
+    const distance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
 
     return (
-
-        dx * dx +
-        dy * dy
-
-    ) <
-
-    coin.radius *
-    coin.radius;
-
+        distance <
+        coin.radius +
+        Math.min(
+            plane.width,
+            plane.height
+        ) * 0.35
+    );
 }
 
 
-/* ==================================================
+/* =====================================================
+   DIFFICULTY
+===================================================== */
+
+function updateDifficulty() {
+
+    /*
+        Every 10 seconds:
+
+        speed increases by only 0.08.
+
+        Maximum:
+        1.7x
+
+        This makes the game gradually
+        harder without becoming extreme.
+    */
+
+    if (
+        frameCount > 0 &&
+        frameCount % 600 === 0
+    ) {
+
+        gameSpeed +=
+            0.08;
+
+        if (
+            gameSpeed >
+            maximumSpeed
+        ) {
+
+            gameSpeed =
+                maximumSpeed;
+        }
+    }
+
+
+    /*
+        Plane movement speed increases
+        more gently than missile speed.
+    */
+
+    plane.speed =
+        plane.baseSpeed *
+        (
+            1 +
+            (gameSpeed - 1) *
+            0.45
+        );
+}
+
+
+/* =====================================================
+   PLANE CONTROL
+===================================================== */
+
+let movingUp =
+    false;
+
+let movingDown =
+    false;
+
+
+function updatePlane() {
+
+    if (
+        movingUp
+    ) {
+
+        plane.y -=
+            plane.speed;
+    }
+
+
+    if (
+        movingDown
+    ) {
+
+        plane.y +=
+            plane.speed;
+    }
+
+
+    if (
+        plane.y < 0
+    ) {
+
+        plane.y = 0;
+    }
+
+
+    if (
+        plane.y >
+        H - plane.height
+    ) {
+
+        plane.y =
+            H - plane.height;
+    }
+}
+
+
+/* =====================================================
+   DRAW PLANE
+===================================================== */
+
+function drawPlane() {
+
+    /*
+        IMPORTANT:
+
+        If Skin1 is equipped,
+        this uses skin1.png.
+
+        It does NOT use plane.png.
+    */
+
+    const image =
+        getSelectedPlaneImage();
+
+
+    if (
+        image.complete &&
+        image.naturalWidth > 0
+    ) {
+
+        ctx.drawImage(
+
+            image,
+
+            plane.x,
+
+            plane.y,
+
+            plane.width,
+
+            plane.height
+        );
+
+    }
+
+    else {
+
+        ctx.fillStyle =
+            "white";
+
+        ctx.fillRect(
+
+            plane.x,
+
+            plane.y,
+
+            plane.width,
+
+            plane.height
+        );
+    }
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    document.getElementById(
+        "menu"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "gameOver"
+    ).style.display =
+        "none";
+
+
+    score = 0;
+
+    runCoins = 0;
+
+    frameCount = 0;
+
+    gameSpeed = 1;
+
+    timeOfDayTimer = 0;
+
+
+    missiles = [];
+
+    coins = [];
+
+
+    plane.y =
+        H / 2 -
+        plane.height / 2;
+
+
+    plane.speed =
+        plane.baseSpeed;
+
+
+    /*
+        Recalculate the selected
+        aircraft size.
+    */
+
+    calculatePlaneSize();
+
+
+    gameRunning =
+        true;
+
+
+    updateSavedCoinUI();
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+}
+
+
+/* =====================================================
    GAME OVER
-================================================== */
+===================================================== */
 
 function endGame() {
 
-    gameRunning = false;
-
-
-    movingUp = false;
-
-    movingDown = false;
-
-
-    document.getElementById(
-        "controls"
-    ).style.display =
-        "none";
+    gameRunning =
+        false;
 
 
     document.getElementById(
         "finalScore"
     ).textContent =
-        score;
+        Math.floor(score);
 
 
     document.getElementById(
         "runCoins"
     ).textContent =
-        collectedCoins;
+        runCoins;
 
 
     document.getElementById(
-        "finalCoins"
+        "gameOverCoins"
     ).textContent =
         savedCoins;
-
-
-    updateSavedCoinUI();
 
 
     document.getElementById(
         "gameOver"
     ).style.display =
         "flex";
-
 }
 
 
-/* ==================================================
-   SCORE
-================================================== */
-
-function updateScore() {
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        score;
-
-}
-
-
-/* ==================================================
+/* =====================================================
    SHOP
-================================================== */
+===================================================== */
+
+let shopWasRunning =
+    false;
+
 
 function openShop() {
 
     /*
-       Pause the game while the shop is open.
+        Remember whether the game
+        was running.
     */
 
-    const wasRunning =
+    shopWasRunning =
         gameRunning;
 
 
-    gameRunning = false;
+    gameRunning =
+        false;
 
 
     document.getElementById(
@@ -1959,14 +1906,7 @@ function openShop() {
 
     updateSavedCoinUI();
 
-
-    /*
-       Remember whether the game was running.
-    */
-
-    window.shopWasRunning =
-        wasRunning;
-
+    updateSkinUI();
 }
 
 
@@ -1979,30 +1919,694 @@ function closeShop() {
 
 
     /*
-       Resume the game if the shop
-       was opened during gameplay.
+        Resume only if the shop
+        was opened during gameplay.
     */
 
     if (
-        window.shopWasRunning
+        shopWasRunning
     ) {
 
-        gameRunning = true;
+        gameRunning =
+            true;
 
         requestAnimationFrame(
             gameLoop
         );
-
     }
 
+
+    shopWasRunning =
+        false;
 }
 
 
-/* ==================================================
-   INITIAL UI
-================================================== */
+/* =====================================================
+   EQUIP DEFAULT
+===================================================== */
+
+function equipDefault() {
+
+    selectedSkin =
+        "default";
+
+
+    localStorage.setItem(
+        "selected737Skin",
+        "default"
+    );
+
+
+    calculatePlaneSize();
+
+    updateSkinUI();
+}
+
+
+/* =====================================================
+   EQUIP SKIN1
+===================================================== */
+
+function equipSkin1() {
+
+    /*
+        Make sure the actual
+        skin1.png exists.
+    */
+
+    if (
+        !skin1Image.complete ||
+        skin1Image.naturalWidth <= 0
+    ) {
+
+        alert(
+            "Please upload skin1.png to the same folder as index.html first."
+        );
+
+        return;
+    }
+
+
+    selectedSkin =
+        "skin1";
+
+
+    localStorage.setItem(
+        "selected737Skin",
+        "skin1"
+    );
+
+
+    /*
+        Recalculate dimensions
+        using Skin1's actual
+        aspect ratio.
+    */
+
+    calculatePlaneSize();
+
+    updateSkinUI();
+}
+
+
+/* =====================================================
+   UPDATE SHOP UI
+===================================================== */
+
+function updateSkinUI() {
+
+    const defaultButton =
+        document.getElementById(
+            "equipDefaultButton"
+        );
+
+    const skin1Button =
+        document.getElementById(
+            "equipSkin1Button"
+        );
+
+    const defaultText =
+        document.getElementById(
+            "defaultEquippedText"
+        );
+
+    const skin1Text =
+        document.getElementById(
+            "skin1EquippedText"
+        );
+
+
+    /*
+        DEFAULT
+    */
+
+    if (
+        selectedSkin ===
+        "default"
+    ) {
+
+        defaultButton.textContent =
+            "✓ EQUIPPED";
+
+        defaultButton.classList.add(
+            "equipped"
+        );
+
+        defaultText.style.display =
+            "block";
+
+    }
+
+    else {
+
+        defaultButton.textContent =
+            "EQUIP DEFAULT";
+
+        defaultButton.classList.remove(
+            "equipped"
+        );
+
+        defaultText.style.display =
+            "none";
+    }
+
+
+    /*
+        SKIN1
+    */
+
+    if (
+        selectedSkin ===
+        "skin1"
+    ) {
+
+        skin1Button.textContent =
+            "✓ EQUIPPED";
+
+        skin1Button.classList.add(
+            "equipped"
+        );
+
+        skin1Text.style.display =
+            "block";
+
+    }
+
+    else {
+
+        skin1Button.textContent =
+            "EQUIP SKIN1";
+
+        skin1Button.classList.remove(
+            "equipped"
+        );
+
+        skin1Text.style.display =
+            "none";
+    }
+}
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop() {
+
+    if (
+        !gameRunning
+    ) {
+
+        return;
+    }
+
+
+    frameCount++;
+
+    timeOfDayTimer++;
+
+
+    /*
+        Score slowly increases.
+    */
+
+    score +=
+        0.1;
+
+
+    /*
+        Update difficulty.
+    */
+
+    updateDifficulty();
+
+
+    /*
+        Draw background.
+    */
+
+    drawSky();
+
+
+    /*
+        Plane.
+    */
+
+    updatePlane();
+
+
+    /*
+        Clouds.
+    */
+
+    updateClouds();
+
+
+    for (
+        const cloud of clouds
+    ) {
+
+        drawCloud(
+            cloud
+        );
+    }
+
+
+    /*
+        Missile spawn rate.
+
+        Starts around every 2 seconds.
+
+        Later becomes more frequent,
+        but is capped.
+    */
+
+    const missileSpawnRate =
+        Math.max(
+
+            65,
+
+            120 -
+            Math.floor(
+                (gameSpeed - 1) *
+                25
+            )
+        );
+
+
+    if (
+        frameCount %
+        missileSpawnRate ===
+        0
+    ) {
+
+        spawnMissile();
+    }
+
+
+    /*
+        Coins.
+    */
+
+    if (
+        frameCount %
+        90 ===
+        0
+    ) {
+
+        spawnCoin();
+    }
+
+
+    /*
+        Update objects.
+    */
+
+    updateMissiles();
+
+    updateCoins();
+
+
+    /*
+        MISSILES
+    */
+
+    for (
+        const missile of missiles
+    ) {
+
+        drawMissile(
+            missile
+        );
+
+
+        if (
+            collision(
+                plane,
+                missile
+            )
+        ) {
+
+            endGame();
+
+            return;
+        }
+    }
+
+
+    /*
+        COINS
+    */
+
+    for (
+        let i =
+            coins.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const coin =
+            coins[i];
+
+
+        drawCoin(
+            coin
+        );
+
+
+        if (
+            collectCoin(
+                coin
+            )
+        ) {
+
+            coins.splice(
+                i,
+                1
+            );
+
+
+            runCoins++;
+
+            savedCoins++;
+
+
+            saveCoins();
+
+            updateSavedCoinUI();
+        }
+    }
+
+
+    /*
+        DRAW AIRCRAFT LAST
+        so it stays visible.
+    */
+
+    drawPlane();
+
+
+    /*
+        TIME INDICATOR
+    */
+
+    const currentTime =
+        getTimeOfDay();
+
+
+    ctx.fillStyle =
+        "rgba(0,0,0,0.35)";
+
+    ctx.font =
+        "bold 14px Arial";
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.fillText(
+
+        currentTime.toUpperCase(),
+
+        W / 2,
+
+        28
+    );
+
+
+    /*
+        Continue.
+    */
+
+    requestAnimationFrame(
+        gameLoop
+    );
+}
+
+
+/* =====================================================
+   INITIAL CLOUDS
+===================================================== */
+
+createClouds();
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+window.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key ===
+            "ArrowUp"
+        ) {
+
+            movingUp =
+                true;
+
+            event.preventDefault();
+        }
+
+
+        if (
+            event.key ===
+            "ArrowDown"
+        ) {
+
+            movingDown =
+                true;
+
+            event.preventDefault();
+        }
+    }
+);
+
+
+window.addEventListener(
+    "keyup",
+    (event) => {
+
+        if (
+            event.key ===
+            "ArrowUp"
+        ) {
+
+            movingUp =
+                false;
+        }
+
+
+        if (
+            event.key ===
+            "ArrowDown"
+        ) {
+
+            movingDown =
+                false;
+        }
+    }
+);
+
+
+/* =====================================================
+   MOBILE CONTROLS
+===================================================== */
+
+const upButton =
+    document.getElementById(
+        "upButton"
+    );
+
+const downButton =
+    document.getElementById(
+        "downButton"
+    );
+
+
+function pressUp(e) {
+
+    e.preventDefault();
+
+    movingUp =
+        true;
+}
+
+
+function releaseUp(e) {
+
+    e.preventDefault();
+
+    movingUp =
+        false;
+}
+
+
+function pressDown(e) {
+
+    e.preventDefault();
+
+    movingDown =
+        true;
+}
+
+
+function releaseDown(e) {
+
+    e.preventDefault();
+
+    movingDown =
+        false;
+}
+
+
+upButton.addEventListener(
+    "pointerdown",
+    pressUp
+);
+
+upButton.addEventListener(
+    "pointerup",
+    releaseUp
+);
+
+upButton.addEventListener(
+    "pointercancel",
+    releaseUp
+);
+
+upButton.addEventListener(
+    "pointerleave",
+    releaseUp
+);
+
+
+downButton.addEventListener(
+    "pointerdown",
+    pressDown
+);
+
+downButton.addEventListener(
+    "pointerup",
+    releaseDown
+);
+
+downButton.addEventListener(
+    "pointercancel",
+    releaseDown
+);
+
+downButton.addEventListener(
+    "pointerleave",
+    releaseDown
+);
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+document.getElementById(
+    "startButton"
+).addEventListener(
+    "click",
+    startGame
+);
+
+
+document.getElementById(
+    "restartButton"
+).addEventListener(
+    "click",
+    startGame
+);
+
+
+/*
+    MAIN MENU SHOP
+*/
+
+document.getElementById(
+    "menuShopButton"
+).addEventListener(
+    "click",
+    openShop
+);
+
+
+/*
+    TOP SHOP
+*/
+
+document.getElementById(
+    "shopButton"
+).addEventListener(
+    "click",
+    openShop
+);
+
+
+/*
+    GAME OVER SHOP
+*/
+
+document.getElementById(
+    "gameOverShopButton"
+).addEventListener(
+    "click",
+    openShop
+);
+
+
+/*
+    CLOSE SHOP
+*/
+
+document.getElementById(
+    "closeShopButton"
+).addEventListener(
+    "click",
+    closeShop
+);
+
+
+/*
+    EQUIP DEFAULT
+*/
+
+document.getElementById(
+    "equipDefaultButton"
+).addEventListener(
+    "click",
+    equipDefault
+);
+
+
+/*
+    EQUIP SKIN1
+*/
+
+document.getElementById(
+    "equipSkin1Button"
+).addEventListener(
+    "click",
+    equipSkin1
+);
+
+
+/* =====================================================
+   INITIAL SHOP STATE
+===================================================== */
+
+updateSkinUI();
 
 updateSavedCoinUI();
 
-</script></body>
+</script>
+
+</body>
 </html>
