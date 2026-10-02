@@ -3,50 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0,user-scalable=no">
 
 <title>2D FLIGHT SIM</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-    font-family: Arial, sans-serif;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:Arial,sans-serif;
 }
 
-body {
-    position: relative;
-}
-
-canvas {
-    display: block;
-    width: 100vw;
-    height: 100vh;
-    background: #87ceeb;
+canvas{
+    display:block;
+    width:100vw;
+    height:100vh;
 }
 
 /* ================= TITLE ================= */
 
-#title {
-    position: fixed;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
+#title{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:20;
 
-    color: white;
-    font-size: clamp(24px, 5vw, 48px);
-    font-weight: 900;
-    letter-spacing: 3px;
+    color:white;
+    font-size:clamp(24px,5vw,46px);
+    font-weight:900;
+    letter-spacing:3px;
+    white-space:nowrap;
 
     text-shadow:
         3px 3px 0 #000,
@@ -54,283 +50,296 @@ canvas {
         2px -2px 0 #000,
         -2px 2px 0 #000;
 
-    font-family: "Recons", "Press Start 2P", Arial, sans-serif;
-    pointer-events: none;
-    white-space: nowrap;
+    font-family:"Recons","Press Start 2P",Arial,sans-serif;
+
+    pointer-events:none;
 }
 
-#updateText {
-    position: fixed;
-    top: 12px;
-    left: 15px;
-    z-index: 20;
+/* ================= UPDATE TEXT ================= */
 
-    color: yellow;
-    font-size: 17px;
-    font-weight: bold;
+#updateText{
+    position:fixed;
+    top:12px;
+    left:14px;
+    z-index:25;
 
-    text-shadow: 2px 2px 0 #000;
+    color:#ffe600;
+    font-size:16px;
+    font-weight:bold;
 
-    animation: bounceUpdate 0.8s infinite alternate;
+    text-shadow:2px 2px 0 #000;
+
+    animation:updateBounce .8s infinite alternate;
 }
 
-@keyframes bounceUpdate {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(-7px);
-    }
+@keyframes updateBounce{
+    from{transform:translateY(0);}
+    to{transform:translateY(-6px);}
 }
 
-#version {
-    position: fixed;
-    right: 12px;
-    bottom: 10px;
-    z-index: 20;
+/* ================= VERSION ================= */
 
-    color: white;
-    font-weight: bold;
-    font-size: 13px;
+#version{
+    position:fixed;
+    right:12px;
+    bottom:9px;
+    z-index:20;
 
-    text-shadow: 2px 2px 0 #000;
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+
+    text-shadow:2px 2px 0 #000;
 }
 
-/* ================= TOP UI ================= */
+/* ================= SCORE ================= */
 
-#score {
-    position: fixed;
-    top: 78px;
-    left: 15px;
-    z-index: 20;
+#score{
+    position:fixed;
+    top:78px;
+    left:15px;
+    z-index:20;
 
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
 
-    text-shadow: 2px 2px 0 #000;
+    text-shadow:2px 2px 0 #000;
 }
 
-#coins {
-    position: fixed;
-    top: 105px;
-    left: 15px;
-    z-index: 20;
+#coins{
+    position:fixed;
+    top:105px;
+    left:15px;
+    z-index:20;
 
-    color: #ffd700;
-    font-size: 18px;
-    font-weight: bold;
+    color:#ffd700;
+    font-size:18px;
+    font-weight:bold;
 
-    text-shadow: 2px 2px 0 #000;
+    text-shadow:2px 2px 0 #000;
 }
 
 /* ================= BUTTONS ================= */
 
-button {
-    border: none;
-    border-radius: 10px;
+button{
+    border:0;
+    outline:0;
 
-    background: rgba(0,0,0,0.7);
-    color: white;
+    border-radius:9px;
 
-    padding: 11px 17px;
-    font-size: 15px;
-    font-weight: bold;
+    background:rgba(0,0,0,.68);
+    color:white;
 
-    cursor: pointer;
+    padding:10px 16px;
+
+    font-size:14px;
+    font-weight:bold;
+
+    cursor:pointer;
 }
 
-button:active {
-    transform: scale(0.95);
+button:active{
+    transform:scale(.95);
 }
 
-#shopButton {
-    position: fixed;
-    top: 75px;
-    right: 15px;
-    z-index: 30;
+/* SHOP */
+
+#shopButton{
+    position:fixed;
+    top:75px;
+    right:15px;
+    z-index:30;
 }
 
-#escortButton {
-    position: fixed;
-    right: 15px;
-    top: 125px;
-    z-index: 30;
+/* ESCORT */
 
-    background: #1565c0;
+#escortButton{
+    position:fixed;
+    top:123px;
+    right:15px;
+    z-index:30;
+
+    background:#1565c0;
 }
 
-#escortButton.active-escort {
-    background: #e65100;
+#escortButton.active{
+    background:#e65100;
 }
 
-.hidden {
-    display: none !important;
+.hidden{
+    display:none!important;
 }
 
 /* ================= MOBILE CONTROLS ================= */
 
-#mobileControls {
-    position: fixed;
-    bottom: 25px;
-    left: 0;
-    width: 100%;
-    z-index: 25;
+#mobileControls{
+    position:fixed;
+    left:0;
+    bottom:25px;
+    width:100%;
 
-    display: flex;
-    justify-content: space-between;
-    padding: 0 25px;
+    display:flex;
+    justify-content:flex-start;
 
-    pointer-events: none;
+    padding-left:20px;
+
+    z-index:30;
+
+    pointer-events:none;
 }
 
-.controlGroup {
-    display: flex;
-    gap: 12px;
-    pointer-events: auto;
+.controlButton{
+    width:62px;
+    height:62px;
+
+    margin-right:10px;
+
+    padding:0;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,.55);
+
+    font-size:27px;
+
+    pointer-events:auto;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.controlButton {
-    width: 62px;
-    height: 62px;
+/* ================= OVERLAY ================= */
 
-    border-radius: 50%;
-    background: rgba(0,0,0,0.55);
+.overlay{
+    position:fixed;
+    inset:0;
 
-    color: white;
-    font-size: 28px;
+    z-index:50;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background:rgba(0,0,0,.74);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-/* ================= OVERLAYS ================= */
+.panel{
+    width:min(92%,430px);
 
-.overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
+    max-height:90vh;
+    overflow-y:auto;
 
-    background: rgba(0,0,0,0.75);
+    padding:24px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius:17px;
+
+    background:#222;
+
+    color:white;
+
+    text-align:center;
+
+    box-shadow:0 0 30px rgba(0,0,0,.8);
 }
 
-.panel {
-    width: min(90%, 420px);
-    max-height: 90vh;
-    overflow-y: auto;
-
-    background: #222;
-    color: white;
-
-    border-radius: 18px;
-    padding: 22px;
-
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+.panel h1{
+    margin-top:0;
 }
 
-.panel h2 {
-    margin-top: 0;
+.panel h2{
+    margin-top:0;
+}
+
+.startButton{
+    background:#1976d2;
+    font-size:18px;
+    padding:13px 28px;
+}
+
+.startShopButton{
+    margin-top:10px;
+    background:#555;
 }
 
 /* ================= GAME OVER ================= */
 
-#gameOverPanel button {
-    margin-top: 10px;
+#gameOverPanel button{
+    margin-top:9px;
 }
 
 /* ================= SHOP ================= */
 
-#shopPanel {
-    width: min(95%, 600px);
+#shopPanel{
+    width:min(95%,600px);
 }
 
-.shopTabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 15px;
+.shopTabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:15px;
 }
 
-.shopTab {
-    flex: 1;
-    padding: 10px 5px;
-    background: #444;
+.shopTab{
+    flex:1;
+    padding:10px 5px;
+    background:#444;
 }
 
-.shopTab.selected {
-    background: #1976d2;
+.shopTab.selected{
+    background:#1976d2;
 }
 
-.shopContent {
-    display: none;
+.shopContent{
+    display:none;
 }
 
-.shopContent.active {
-    display: block;
+.shopContent.active{
+    display:block;
 }
 
-.shopItem {
-    background: #333;
-    border-radius: 12px;
-    padding: 15px;
-    margin: 10px 0;
+.shopItem{
+    background:#333;
+    border-radius:12px;
+    padding:15px;
+    margin:10px 0;
 }
 
-.shopItem img {
-    width: 110px;
-    height: 70px;
-    object-fit: contain;
-    margin-bottom: 8px;
+.shopItem img{
+    width:120px;
+    height:75px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 8px;
 }
 
-.shopItem button {
-    background: #1976d2;
-    margin-top: 8px;
+.shopItem button{
+    background:#1976d2;
+    margin-top:8px;
 }
 
-.shopItem button.equipped {
-    background: #2e7d32;
+.shopItem button.equipped{
+    background:#2e7d32;
 }
 
-.comingSoon {
-    opacity: 0.45;
+.comingSoon{
+    opacity:.45;
 }
 
-.closeShop {
-    background: #b71c1c !important;
-    width: 100%;
-    margin-top: 10px;
+.closeShop{
+    width:100%;
+    margin-top:10px;
+    background:#b71c1c!important;
 }
 
-/* ================= MENU ================= */
+/* ESCORT DESCRIPTION */
 
-#startScreen {
-    z-index: 45;
-}
-
-.startButton {
-    background: #1976d2;
-    font-size: 18px;
-    padding: 13px 28px;
-}
-
-.startShopButton {
-    margin-top: 10px;
-    background: #555;
-}
-
-/* ================= ESCORT INFO ================= */
-
-.escortInfo {
-    font-size: 13px;
-    color: #ccc;
-    margin-top: 8px;
-    line-height: 1.5;
+.escortInfo{
+    color:#ccc;
+    font-size:13px;
+    line-height:1.5;
+    margin-top:8px;
 }
 </style>
 </head>
@@ -344,6 +353,7 @@ button:active {
 <div id="updateText">টাকলা UPDATE!!</div>
 
 <div id="score">Score: 0</div>
+
 <div id="coins">🪙 Coins: 0</div>
 
 <button id="shopButton">SHOP</button>
@@ -353,23 +363,32 @@ button:active {
 </button>
 
 <div id="mobileControls">
-    <div class="controlGroup">
-        <button class="controlButton" id="upButton">▲</button>
-        <button class="controlButton" id="downButton">▼</button>
-    </div>
+
+    <button class="controlButton" id="upButton">
+        ▲
+    </button>
+
+    <button class="controlButton" id="downButton">
+        ▼
+    </button>
+
 </div>
 
-<div id="version">Version-2.0</div>
+<div id="version">
+    Version-2.0
+</div>
 
 
-<!-- ================= START SCREEN ================= -->
+<!-- ================= START ================= -->
 
 <div class="overlay" id="startScreen">
+
     <div class="panel">
+
         <h1>737 SKY ESCAPE</h1>
 
         <p>
-            Fly your aircraft and avoid the missiles!
+            Fly your aircraft and avoid incoming missiles!
         </p>
 
         <button class="startButton" id="startButton">
@@ -381,13 +400,16 @@ button:active {
         <button class="startShopButton" id="startShopButton">
             SHOP
         </button>
+
     </div>
+
 </div>
 
 
 <!-- ================= GAME OVER ================= -->
 
 <div class="overlay hidden" id="gameOverScreen">
+
     <div class="panel" id="gameOverPanel">
 
         <h1>GAME OVER</h1>
@@ -411,6 +433,7 @@ button:active {
         </button>
 
     </div>
+
 </div>
 
 
@@ -444,13 +467,13 @@ button:active {
         </div>
 
 
-        <!-- 737 TAB -->
+        <!-- 737 -->
 
         <div class="shopContent" id="content737">
 
             <div class="shopItem">
 
-                <img src="plane.png" alt="Default 737">
+                <img src="plane.png">
 
                 <h3>Default 737</h3>
 
@@ -465,7 +488,7 @@ button:active {
 
             <div class="shopItem">
 
-                <img src="skin1.png" alt="Skin 1">
+                <img src="skin1.png">
 
                 <h3>Skin 1</h3>
 
@@ -480,17 +503,17 @@ button:active {
         </div>
 
 
-        <!-- SPECIAL TAB -->
+        <!-- SPECIAL -->
 
         <div class="shopContent" id="contentSpecial">
 
             <div class="shopItem">
 
-                <img src="takla.png" alt="Takla">
+                <img src="takla.png">
 
                 <h3>TAKLA</h3>
 
-                <p>Special aircraft</p>
+                <p>150 Coins</p>
 
                 <button id="taklaButton">
                     BUY / EQUIP
@@ -501,7 +524,7 @@ button:active {
         </div>
 
 
-        <!-- ABILITIES TAB -->
+        <!-- ABILITIES -->
 
         <div class="shopContent" id="contentAbilities">
 
@@ -510,23 +533,28 @@ button:active {
                 <h3>✈ ESCORT FIGHTER</h3>
 
                 <p>
-                    Calls an escort fighter that protects your plane
-                    and fires defensive missiles.
+                    Your fighter protects you and
+                    automatically fires missiles at
+                    incoming enemy missiles.
                 </p>
 
                 <p>
-                    Cost: <b>100 Coins</b>
+                    Cost:
+                    <b>100 Coins</b>
                 </p>
 
                 <button id="escortBuyButton">
-                    BUY ESCORT
+                    BUY - 100 COINS
                 </button>
 
                 <div class="escortInfo">
-                    Escort arrives from behind,
-                    protects you and fires missiles.
-                    It starts retreating after 55 seconds
-                    and disappears at 60 seconds.
+
+                    Escort enters from behind,
+                    moves ahead of your aircraft,
+                    targets incoming missiles,
+                    fires defensive missiles,
+                    then retreats after 55 seconds.
+
                 </div>
 
             </div>
@@ -562,8 +590,11 @@ button:active {
    CANVAS
 ========================================================= */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("gameCanvas");
+
+const ctx =
+    canvas.getContext("2d");
 
 
 /* =========================================================
@@ -587,19 +618,18 @@ escortImage.src = "escort.png";
    AUDIO
 ========================================================= */
 
-function playSound() {
+function playSound(){
 
-    try {
+    try{
 
-        const sound = new Audio("sound1 .mp3");
+        const sound =
+            new Audio("sound1.mp3");
 
-        sound.volume = 1.0;
+        sound.volume = 1;
 
-        sound.play().catch(() => {
-            // Browser may block audio until user interaction.
-        });
+        sound.play().catch(()=>{});
 
-    } catch (e) {}
+    }catch(e){}
 
 }
 
@@ -614,28 +644,33 @@ let gameOver = false;
 let score = 0;
 
 let savedCoins =
-    parseInt(localStorage.getItem("skyEscapeCoins") || "0");
+    parseInt(
+        localStorage.getItem("skyEscapeCoins") || "0"
+    );
 
 let selectedSkin =
-    localStorage.getItem("selected737Skin") || "default";
+    localStorage.getItem("selected737Skin") ||
+    "default";
 
 let escortPurchased =
-    localStorage.getItem("escortAbilityPurchased") === "true";
+    localStorage.getItem(
+        "escortAbilityPurchased"
+    ) === "true";
 
 
 /* =========================================================
-   PLANE
+   PLAYER
 ========================================================= */
 
 const plane = {
 
-    x: 120,
-    y: 300,
+    x:120,
+    y:300,
 
-    width: 90,
-    height: 55,
+    width:90,
+    height:55,
 
-    speed: 5
+    speed:5
 
 };
 
@@ -644,24 +679,21 @@ const plane = {
    RESIZE
 ========================================================= */
 
-function resizeCanvas() {
+function resizeCanvas(){
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width =
+        window.innerWidth;
 
-    if (plane.y > canvas.height - plane.height) {
-        plane.y = canvas.height - plane.height;
-    }
+    canvas.height =
+        window.innerHeight;
 
 }
 
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
-
-/*
- IMPORTANT:
- plane is declared before resizeCanvas is called.
-*/
 resizeCanvas();
 
 
@@ -672,60 +704,64 @@ resizeCanvas();
 let moveUp = false;
 let moveDown = false;
 
-document.addEventListener("keydown", (e) => {
 
-    if (e.key === "ArrowUp") {
-        moveUp = true;
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="ArrowUp")
+            moveUp=true;
+
+        if(e.key==="ArrowDown")
+            moveDown=true;
+
     }
+);
 
-    if (e.key === "ArrowDown") {
-        moveDown = true;
+
+document.addEventListener(
+    "keyup",
+    e=>{
+
+        if(e.key==="ArrowUp")
+            moveUp=false;
+
+        if(e.key==="ArrowDown")
+            moveDown=false;
+
     }
-
-});
-
-document.addEventListener("keyup", (e) => {
-
-    if (e.key === "ArrowUp") {
-        moveUp = false;
-    }
-
-    if (e.key === "ArrowDown") {
-        moveDown = false;
-    }
-
-});
+);
 
 
 /* =========================================================
-   MOBILE BUTTONS
+   MOBILE INPUT
 ========================================================= */
 
-function startUp(e) {
+function pressUp(e){
 
     e.preventDefault();
-    moveUp = true;
+    moveUp=true;
 
 }
 
-function stopUp(e) {
+function releaseUp(e){
 
     e.preventDefault();
-    moveUp = false;
+    moveUp=false;
 
 }
 
-function startDown(e) {
+function pressDown(e){
 
     e.preventDefault();
-    moveDown = true;
+    moveDown=true;
 
 }
 
-function stopDown(e) {
+function releaseDown(e){
 
     e.preventDefault();
-    moveDown = false;
+    moveDown=false;
 
 }
 
@@ -737,22 +773,120 @@ const downButton =
     document.getElementById("downButton");
 
 
-upButton.addEventListener("touchstart", startUp);
-upButton.addEventListener("touchend", stopUp);
-upButton.addEventListener("touchcancel", stopUp);
+upButton.addEventListener(
+    "touchstart",
+    pressUp,
+    {passive:false}
+);
 
-downButton.addEventListener("touchstart", startDown);
-downButton.addEventListener("touchend", stopDown);
-downButton.addEventListener("touchcancel", stopDown);
+upButton.addEventListener(
+    "touchend",
+    releaseUp,
+    {passive:false}
+);
+
+upButton.addEventListener(
+    "touchcancel",
+    releaseUp,
+    {passive:false}
+);
 
 
-upButton.addEventListener("mousedown", startUp);
-upButton.addEventListener("mouseup", stopUp);
-upButton.addEventListener("mouseleave", stopUp);
+downButton.addEventListener(
+    "touchstart",
+    pressDown,
+    {passive:false}
+);
 
-downButton.addEventListener("mousedown", startDown);
-downButton.addEventListener("mouseup", stopDown);
-downButton.addEventListener("mouseleave", stopDown);
+downButton.addEventListener(
+    "touchend",
+    releaseDown,
+    {passive:false}
+);
+
+downButton.addEventListener(
+    "touchcancel",
+    releaseDown,
+    {passive:false}
+);
+
+
+upButton.addEventListener(
+    "mousedown",
+    pressUp
+);
+
+upButton.addEventListener(
+    "mouseup",
+    releaseUp
+);
+
+upButton.addEventListener(
+    "mouseleave",
+    releaseUp
+);
+
+
+downButton.addEventListener(
+    "mousedown",
+    pressDown
+);
+
+downButton.addEventListener(
+    "mouseup",
+    releaseDown
+);
+
+downButton.addEventListener(
+    "mouseleave",
+    releaseDown
+);
+
+
+/* =========================================================
+   IMAGE DRAWING WITHOUT SQUASHING
+========================================================= */
+
+function drawImageContain(
+    image,
+    x,
+    y,
+    maxWidth,
+    maxHeight
+){
+
+    if(
+        !image.complete ||
+        image.naturalWidth <= 0 ||
+        image.naturalHeight <= 0
+    ){
+        return;
+    }
+
+
+    const ratio =
+        Math.min(
+            maxWidth / image.naturalWidth,
+            maxHeight / image.naturalHeight
+        );
+
+
+    const width =
+        image.naturalWidth * ratio;
+
+    const height =
+        image.naturalHeight * ratio;
+
+
+    ctx.drawImage(
+        image,
+        x + (maxWidth-width)/2,
+        y + (maxHeight-height)/2,
+        width,
+        height
+    );
+
+}
 
 
 /* =========================================================
@@ -779,114 +913,141 @@ let coinTimer = 0;
    CLOUDS
 ========================================================= */
 
-let clouds = [];
+let clouds=[];
 
-for (let i = 0; i < 12; i++) {
+
+for(let i=0;i<12;i++){
 
     clouds.push({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        size: 30 + Math.random() * 50,
-        speed: 0.5 + Math.random()
+
+        x:
+            Math.random() *
+            window.innerWidth,
+
+        y:
+            Math.random() *
+            window.innerHeight,
+
+        size:
+            30+
+            Math.random()*50,
+
+        speed:
+            .5+
+            Math.random()
+
     });
 
 }
 
 
 /* =========================================================
-   TIME OF DAY
+   DAY/NIGHT
 ========================================================= */
 
-let timeOfDayTimer = 0;
+let timeOfDayTimer=0;
 
 
 /* =========================================================
    ESCORT
 ========================================================= */
 
-let escort = {
+const escort={
 
-    active: false,
+    active:false,
 
-    x: -150,
-    y: 0,
+    x:-150,
+    y:0,
 
-    width: 90,
-    height: 55,
+    width:100,
+    height:60,
 
-    state: "none",
+    timer:0,
 
-    timer: 0,
+    state:"none",
 
-    shots: [],
+    shootTimer:0,
 
-    shootTimer: 0
+    shots:[]
 
 };
 
 
 /* =========================================================
-   UTILITY
+   RANDOM Y
 ========================================================= */
 
-function randomY(height) {
+function randomY(height){
 
     return Math.max(
         10,
-        Math.random() * (canvas.height - height - 10)
+        Math.random() *
+        Math.max(
+            20,
+            canvas.height-height-20
+        )
     );
 
 }
 
 
 /* =========================================================
-   DRAW BACKGROUND
+   BACKGROUND
 ========================================================= */
 
-function drawBackground() {
+function drawBackground(){
 
     const phase =
-        Math.floor(timeOfDayTimer / 1800) % 3;
+        Math.floor(
+            timeOfDayTimer/1800
+        )%3;
 
 
-    let topColor;
-    let bottomColor;
+    let top;
+    let bottom;
 
 
-    if (phase === 0) {
+    if(phase===0){
 
-        topColor = "#55b9ff";
-        bottomColor = "#d8f3ff";
-
-    }
-
-    else if (phase === 1) {
-
-        topColor = "#f39c5a";
-        bottomColor = "#ffd5a3";
+        top="#55b9ff";
+        bottom="#d8f3ff";
 
     }
 
-    else {
+    else if(phase===1){
 
-        topColor = "#071b3a";
-        bottomColor = "#173b63";
+        top="#f39c5a";
+        bottom="#ffd5a3";
+
+    }
+
+    else{
+
+        top="#071b3a";
+        bottom="#173b63";
 
     }
 
 
     const gradient =
         ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            canvas.height
+            0,0,
+            0,canvas.height
         );
 
-    gradient.addColorStop(0, topColor);
-    gradient.addColorStop(1, bottomColor);
 
-    ctx.fillStyle = gradient;
+    gradient.addColorStop(
+        0,
+        top
+    );
+
+    gradient.addColorStop(
+        1,
+        bottom
+    );
+
+
+    ctx.fillStyle=gradient;
 
     ctx.fillRect(
         0,
@@ -899,69 +1060,29 @@ function drawBackground() {
 
 
 /* =========================================================
-   DRAW CLOUDS
+   CLOUDS
 ========================================================= */
 
-function drawClouds() {
+function updateClouds(dt){
 
-    ctx.save();
+    for(const cloud of clouds){
 
-    ctx.fillStyle = "rgba(255,255,255,0.75)";
-
-    for (const cloud of clouds) {
-
-        ctx.beginPath();
-
-        ctx.arc(
-            cloud.x,
-            cloud.y,
-            cloud.size * 0.45,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.arc(
-            cloud.x + cloud.size * 0.45,
-            cloud.y - cloud.size * 0.15,
-            cloud.size * 0.55,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.arc(
-            cloud.x + cloud.size,
-            cloud.y,
-            cloud.size * 0.4,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-    }
-
-    ctx.restore();
-
-}
+        cloud.x -=
+            cloud.speed*dt;
 
 
-/* =========================================================
-   UPDATE CLOUDS
-========================================================= */
-
-function updateClouds(dt) {
-
-    for (const cloud of clouds) {
-
-        cloud.x -= cloud.speed * dt;
-
-        if (cloud.x < -cloud.size * 2) {
+        if(
+            cloud.x <
+            -cloud.size*2
+        ){
 
             cloud.x =
-                canvas.width + cloud.size * 2;
+                canvas.width+
+                cloud.size*2;
 
             cloud.y =
-                Math.random() * canvas.height;
+                Math.random()*
+                canvas.height;
 
         }
 
@@ -970,83 +1091,108 @@ function updateClouds(dt) {
 }
 
 
+function drawClouds(){
+
+    ctx.fillStyle=
+        "rgba(255,255,255,.75)";
+
+
+    for(const cloud of clouds){
+
+        ctx.beginPath();
+
+        ctx.arc(
+            cloud.x,
+            cloud.y,
+            cloud.size*.45,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            cloud.x+
+            cloud.size*.45,
+            cloud.y-
+            cloud.size*.15,
+            cloud.size*.55,
+            0,
+            Math.PI*2
+        );
+
+        ctx.arc(
+            cloud.x+
+            cloud.size,
+            cloud.y,
+            cloud.size*.4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+
+}
+
+
 /* =========================================================
-   DRAW PLANE
+   PLANE
 ========================================================= */
 
-function getPlaneImage() {
+function getPlaneImage(){
 
-    if (selectedSkin === "skin1") {
+    if(selectedSkin==="skin1")
         return skin1Image;
-    }
 
-    if (selectedSkin === "takla") {
+    if(selectedSkin==="takla")
         return taklaImage;
-    }
 
     return planeImage;
 
 }
 
 
-function drawPlane() {
+function drawPlane(){
 
-    const img = getPlaneImage();
+    const img =
+        getPlaneImage();
 
-    if (img.complete && img.naturalWidth > 0) {
 
-        ctx.drawImage(
-            img,
-            plane.x,
-            plane.y,
-            plane.width,
-            plane.height
-        );
-
-    } else {
-
-        ctx.fillStyle = "white";
-
-        ctx.fillRect(
-            plane.x,
-            plane.y,
-            plane.width,
-            plane.height
-        );
-
-    }
+    drawImageContain(
+        img,
+        plane.x,
+        plane.y,
+        plane.width,
+        plane.height
+    );
 
 }
 
 
-/* =========================================================
-   UPDATE PLANE
-========================================================= */
+function updatePlane(dt){
 
-function updatePlane(dt) {
+    if(moveUp)
+        plane.y -=
+            plane.speed*dt;
 
-    if (moveUp) {
-
-        plane.y -= plane.speed * dt;
-
-    }
-
-    if (moveDown) {
-
-        plane.y += plane.speed * dt;
-
-    }
+    if(moveDown)
+        plane.y +=
+            plane.speed*dt;
 
 
-    if (plane.y < 0) {
-        plane.y = 0;
-    }
+    if(plane.y<0)
+        plane.y=0;
 
 
-    if (plane.y + plane.height > canvas.height) {
+    if(
+        plane.y+
+        plane.height>
+        canvas.height
+    ){
 
         plane.y =
-            canvas.height - plane.height;
+            canvas.height-
+            plane.height;
 
     }
 
@@ -1054,24 +1200,25 @@ function updatePlane(dt) {
 
 
 /* =========================================================
-   MISSILE CREATION
+   CREATE MISSILE
 ========================================================= */
 
-function createMissile() {
+function createMissile(){
 
     missiles.push({
 
-        x: canvas.width + 60,
+        x:
+            canvas.width+70,
 
-        y: randomY(35),
+        y:
+            randomY(45),
 
-        width: 55,
-
-        height: 25,
+        width:65,
+        height:35,
 
         speed:
-            missileSpeed +
-            Math.random() * 2
+            missileSpeed+
+            Math.random()*2
 
     });
 
@@ -1079,74 +1226,44 @@ function createMissile() {
 
 
 /* =========================================================
-   UPDATE MISSILES
+   MISSILES
 ========================================================= */
 
-function updateMissiles(dt) {
+function updateMissiles(dt){
 
-    missileTimer += dt;
+    missileTimer+=dt;
 
-    if (missileTimer > 70) {
 
-        missileTimer = 0;
+    if(missileTimer>65){
+
+        missileTimer=0;
 
         createMissile();
 
     }
 
 
-    for (const missile of missiles) {
+    for(const missile of missiles){
 
         missile.x -=
-            missile.speed * dt;
+            missile.speed*dt;
 
     }
-
-
-    missiles =
-        missiles.filter(
-            missile =>
-                missile.x > -100
-        );
 
 }
 
 
-/* =========================================================
-   DRAW MISSILES
-========================================================= */
+function drawMissiles(){
 
-function drawMissiles() {
+    for(const missile of missiles){
 
-    for (const missile of missiles) {
-
-        if (
-            missileImage.complete &&
-            missileImage.naturalWidth > 0
-        ) {
-
-            ctx.drawImage(
-                missileImage,
-                missile.x,
-                missile.y,
-                missile.width,
-                missile.height
-            );
-
-        }
-
-        else {
-
-            ctx.fillStyle = "red";
-
-            ctx.fillRect(
-                missile.x,
-                missile.y,
-                missile.width,
-                missile.height
-            );
-
-        }
+        drawImageContain(
+            missileImage,
+            missile.x,
+            missile.y,
+            missile.width,
+            missile.height
+        );
 
     }
 
@@ -1157,73 +1274,90 @@ function drawMissiles() {
    COINS
 ========================================================= */
 
-function createCoin() {
+function createCoin(){
 
     coinObjects.push({
 
-        x: canvas.width + 30,
+        x:
+            canvas.width+30,
 
         y:
-            40 +
-            Math.random() *
+            40+
+            Math.random()*
             Math.max(
                 50,
-                canvas.height - 80
+                canvas.height-80
             ),
 
-        radius: 12,
+        radius:12,
 
-        speed: 3.5
+        speed:3.5
 
     });
 
 }
 
 
-function updateCoins(dt) {
+function updateCoins(dt){
 
-    coinTimer += dt;
+    coinTimer+=dt;
 
-    if (coinTimer > 110) {
 
-        coinTimer = 0;
+    if(coinTimer>110){
+
+        coinTimer=0;
 
         createCoin();
 
     }
 
 
-    for (const coin of coinObjects) {
+    for(const coin of coinObjects){
 
         coin.x -=
-            (coin.speed + missileSpeed * 0.15) * dt;
+            coin.speed*dt;
 
     }
 
 
-    for (let i = coinObjects.length - 1; i >= 0; i--) {
+    for(
+        let i=coinObjects.length-1;
+        i>=0;
+        i--
+    ){
 
-        const coin = coinObjects[i];
+        const coin =
+            coinObjects[i];
 
-        if (
+
+        if(
+
             plane.x <
-                coin.x + coin.radius &&
-            plane.x + plane.width >
-                coin.x - coin.radius &&
+            coin.x+coin.radius &&
+
+            plane.x+
+            plane.width >
+            coin.x-coin.radius &&
+
             plane.y <
-                coin.y + coin.radius &&
-            plane.y + plane.height >
-                coin.y - coin.radius
-        ) {
+            coin.y+coin.radius &&
+
+            plane.y+
+            plane.height >
+            coin.y-coin.radius
+
+        ){
 
             savedCoins++;
+
 
             localStorage.setItem(
                 "skyEscapeCoins",
                 savedCoins
             );
 
-            coinObjects.splice(i, 1);
+
+            coinObjects.splice(i,1);
 
             playSound();
 
@@ -1231,22 +1365,14 @@ function updateCoins(dt) {
 
     }
 
-
-    coinObjects =
-        coinObjects.filter(
-            coin => coin.x > -50
-        );
-
 }
 
 
-function drawCoins() {
+function drawCoins(){
 
-    for (const coin of coinObjects) {
+    for(const coin of coinObjects){
 
-        ctx.save();
-
-        ctx.fillStyle = "#ffd700";
+        ctx.fillStyle="#ffd700";
 
         ctx.beginPath();
 
@@ -1255,25 +1381,25 @@ function drawCoins() {
             coin.y,
             coin.radius,
             0,
-            Math.PI * 2
+            Math.PI*2
         );
 
         ctx.fill();
 
-        ctx.fillStyle = "#8a6500";
 
-        ctx.font = "bold 13px Arial";
+        ctx.fillStyle="#7a5700";
 
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.font=
+            "bold 13px Arial";
+
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
 
         ctx.fillText(
             "$",
             coin.x,
             coin.y
         );
-
-        ctx.restore();
 
     }
 
@@ -1284,58 +1410,71 @@ function drawCoins() {
    COLLISION
 ========================================================= */
 
-function collision(a, b) {
+function collision(a,b){
 
-    return (
-        a.x < b.x + b.width &&
-        a.x + a.width > b.x &&
-        a.y < b.y + b.height &&
-        a.y + a.height > b.y
+    return(
+
+        a.x <
+        b.x+b.width &&
+
+        a.x+a.width >
+        b.x &&
+
+        a.y <
+        b.y+b.height &&
+
+        a.y+a.height >
+        b.y
+
     );
 
 }
 
 
 /* =========================================================
-   ESCORT ACTIVATION
+   ESCORT
 ========================================================= */
 
-function activateEscort() {
+function activateEscort(){
 
-    if (!escortPurchased) {
+    if(
+        !escortPurchased ||
+        !gameRunning ||
+        gameOver ||
+        escort.active
+    ){
         return;
     }
 
-    if (!gameRunning || gameOver) {
-        return;
-    }
 
-    if (escort.active) {
-        return;
-    }
+    escort.active=true;
 
+    escort.timer=0;
 
-    escort.active = true;
+    escort.state="enter";
 
-    escort.timer = 0;
+    escort.x=
+        plane.x-180;
 
-    escort.state = "enter";
+    escort.y=
+        plane.y-90;
 
-    escort.x = plane.x - 180;
+    escort.shots=[];
 
-    escort.y = plane.y - 80;
-
-    escort.shots = [];
-
-    escort.shootTimer = 0;
+    escort.shootTimer=0;
 
 
     const button =
-        document.getElementById("escortButton");
+        document.getElementById(
+            "escortButton"
+        );
 
-    button.className = "active-escort";
 
-    button.textContent = "ESCORT ACTIVE";
+    button.className="active";
+
+    button.textContent=
+        "ESCORT ACTIVE";
+
 
     playSound();
 
@@ -1343,143 +1482,43 @@ function activateEscort() {
 
 
 /* =========================================================
-   UPDATE ESCORT
+   FIND TARGET
 ========================================================= */
 
-function updateEscort(dt) {
+function findEscortTarget(){
 
-    if (!escort.active) {
-        return;
-    }
+    let target=null;
 
-
-    escort.timer += dt;
+    let closestDistance=
+        Infinity;
 
 
-    /*
-       Enter for first 3 seconds
-    */
+    for(const missile of missiles){
 
-    if (escort.state === "enter") {
+        /*
+          Only target missiles that are
+          actually in front of the escort.
+        */
 
-        escort.x += 5 * dt;
+        if(
+            missile.x >
+            escort.x+escort.width
+        ){
 
-        escort.y +=
-            (plane.y - escort.y) * 0.08 * dt;
-
-        if (escort.timer >= 180) {
-
-            escort.state = "guard";
-
-        }
-
-    }
+            const distance =
+                missile.x-
+                escort.x;
 
 
-    /*
-       Guard from 3 to 55 seconds
-    */
+            if(
+                distance<
+                closestDistance
+            ){
 
-    else if (escort.state === "guard") {
+                closestDistance=
+                    distance;
 
-        escort.x +=
-            (plane.x + 150 - escort.x) *
-            0.08 *
-            dt;
-
-        escort.y +=
-            (plane.y - 90 - escort.y) *
-            0.08 *
-            dt;
-
-
-        escort.shootTimer += dt;
-
-        if (escort.shootTimer > 70) {
-
-            escort.shootTimer = 0;
-
-            escort.shots.push({
-
-                x: escort.x + escort.width,
-
-                y: escort.y + escort.height / 2,
-
-                width: 40,
-
-                height: 18,
-
-                speed: 10,
-
-                hit: false
-
-            });
-
-        }
-
-
-        if (escort.timer >= 3300) {
-
-            escort.state = "retreat";
-
-        }
-
-    }
-
-
-    /*
-       Retreat from 55 to 60 seconds
-    */
-
-    else if (escort.state === "retreat") {
-
-        escort.x += 6 * dt;
-
-        escort.y -= 1.5 * dt;
-
-    }
-
-
-    /*
-       Remove after 60 seconds
-    */
-
-    if (escort.timer >= 3600) {
-
-        finishEscort();
-
-        return;
-
-    }
-
-
-    /*
-       Move escort missiles
-    */
-
-    for (const shot of escort.shots) {
-
-        shot.x += shot.speed * dt;
-
-    }
-
-
-    /*
-       Defensive missile interception
-    */
-
-    for (const shot of escort.shots) {
-
-        for (const missile of missiles) {
-
-            if (
-                !shot.hit &&
-                collision(shot, missile)
-            ) {
-
-                shot.hit = true;
-
-                missile.x = -200;
+                target=missile;
 
             }
 
@@ -1488,12 +1527,282 @@ function updateEscort(dt) {
     }
 
 
+    return target;
+
+}
+
+
+/* =========================================================
+   ESCORT UPDATE
+========================================================= */
+
+function updateEscort(dt){
+
+    if(!escort.active)
+        return;
+
+
+    escort.timer+=dt;
+
+
+    /* ENTER */
+
+    if(escort.state==="enter"){
+
+        escort.x +=
+            5*dt;
+
+
+        escort.y +=
+            (
+                plane.y-90-
+                escort.y
+            )*.08*dt;
+
+
+        if(escort.timer>=180){
+
+            escort.state="guard";
+
+        }
+
+    }
+
+
+    /* GUARD */
+
+    else if(
+        escort.state==="guard"
+    ){
+
+        /*
+           Keep escort ahead of player.
+        */
+
+        const desiredX =
+            plane.x+150;
+
+
+        const desiredY =
+            plane.y-75;
+
+
+        escort.x +=
+            (
+                desiredX-
+                escort.x
+            )*.08*dt;
+
+
+        escort.y +=
+            (
+                desiredY-
+                escort.y
+            )*.08*dt;
+
+
+        /*
+           Find an incoming missile.
+        */
+
+        const target =
+            findEscortTarget();
+
+
+        /*
+           Fire frequently when
+           a target exists.
+        */
+
+        escort.shootTimer+=dt;
+
+
+        if(
+            target &&
+            escort.shootTimer>=25
+        ){
+
+            escort.shootTimer=0;
+
+
+            const startX =
+                escort.x+
+                escort.width*.85;
+
+
+            const startY =
+                escort.y+
+                escort.height*.5;
+
+
+            /*
+               Aim directly at target.
+            */
+
+            const targetX =
+                target.x+
+                target.width*.5;
+
+
+            const targetY =
+                target.y+
+                target.height*.5;
+
+
+            const dx =
+                targetX-startX;
+
+
+            const dy =
+                targetY-startY;
+
+
+            const length =
+                Math.sqrt(
+                    dx*dx+
+                    dy*dy
+                );
+
+
+            const speed=13;
+
+
+            escort.shots.push({
+
+                x:startX,
+
+                y:startY,
+
+                width:35,
+
+                height:18,
+
+                vx:
+                    (dx/length)*speed,
+
+                vy:
+                    (dy/length)*speed,
+
+                life:0,
+
+                hit:false
+
+            });
+
+        }
+
+
+        /*
+           Retreat after 55 seconds.
+        */
+
+        if(
+            escort.timer>=3300
+        ){
+
+            escort.state="retreat";
+
+        }
+
+    }
+
+
+    /* RETREAT */
+
+    else if(
+        escort.state==="retreat"
+    ){
+
+        escort.x +=
+            6*dt;
+
+        escort.y -=
+            1.5*dt;
+
+    }
+
+
+    /*
+       UPDATE DEFENSIVE MISSILES
+    */
+
+    for(
+        const shot of escort.shots
+    ){
+
+        shot.x +=
+            shot.vx*dt;
+
+        shot.y +=
+            shot.vy*dt;
+
+        shot.life+=dt;
+
+
+        /*
+           Check every enemy missile.
+        */
+
+        for(
+            const missile of missiles
+        ){
+
+            if(
+                !shot.hit &&
+                collision(
+                    shot,
+                    missile
+                )
+            ){
+
+                shot.hit=true;
+
+                missile.destroyed=true;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       Remove destroyed missiles.
+    */
+
+    missiles =
+        missiles.filter(
+            missile =>
+                !missile.destroyed &&
+                missile.x>-150
+        );
+
+
+    /*
+       Remove old escort shots.
+    */
+
     escort.shots =
         escort.shots.filter(
             shot =>
-                shot.x < canvas.width + 100 &&
-                !shot.hit
+                !shot.hit &&
+                shot.life<180
         );
+
+
+    /*
+       Escort disappears after 60 sec.
+    */
+
+    if(
+        escort.timer>=3600
+    ){
+
+        finishEscort();
+
+    }
 
 }
 
@@ -1502,75 +1811,69 @@ function updateEscort(dt) {
    DRAW ESCORT
 ========================================================= */
 
-function drawEscort() {
+function drawEscort(){
 
-    if (!escort.active) {
+    if(!escort.active)
         return;
-    }
-
-
-    if (
-        escortImage.complete &&
-        escortImage.naturalWidth > 0
-    ) {
-
-        ctx.drawImage(
-            escortImage,
-            escort.x,
-            escort.y,
-            escort.width,
-            escort.height
-        );
-
-    }
-
-    else {
-
-        ctx.fillStyle = "#555";
-
-        ctx.fillRect(
-            escort.x,
-            escort.y,
-            escort.width,
-            escort.height
-        );
-
-    }
 
 
     /*
-       Draw escort missiles
+       Draw fighter without
+       squashing the image.
     */
 
-    for (const shot of escort.shots) {
+    drawImageContain(
+        escortImage,
+        escort.x,
+        escort.y,
+        escort.width,
+        escort.height
+    );
 
-        if (
-            missileImage.complete &&
-            missileImage.naturalWidth > 0
-        ) {
 
-            ctx.drawImage(
-                missileImage,
-                shot.x,
-                shot.y,
-                shot.width,
-                shot.height
+    /*
+       Draw defensive missiles.
+    */
+
+    for(
+        const shot of escort.shots
+    ){
+
+        /*
+           Defensive missile gets a
+           slight rotation toward target.
+        */
+
+        ctx.save();
+
+        ctx.translate(
+            shot.x+
+            shot.width/2,
+            shot.y+
+            shot.height/2
+        );
+
+
+        const angle =
+            Math.atan2(
+                shot.vy,
+                shot.vx
             );
 
-        }
 
-        else {
+        ctx.rotate(angle);
 
-            ctx.fillStyle = "yellow";
 
-            ctx.fillRect(
-                shot.x,
-                shot.y,
-                shot.width,
-                shot.height
-            );
+        drawImageContain(
+            missileImage,
+            -shot.width/2,
+            -shot.height/2,
+            shot.width,
+            shot.height
+        );
 
-        }
+
+        ctx.restore();
 
     }
 
@@ -1581,16 +1884,15 @@ function drawEscort() {
    FINISH ESCORT
 ========================================================= */
 
-function finishEscort() {
+function finishEscort(){
 
-    escort.active = false;
+    escort.active=false;
 
-    escort.state = "none";
+    escort.state="none";
 
-    escort.timer = 0;
+    escort.timer=0;
 
-    escort.shots = [];
-
+    escort.shots=[];
 
     updateEscortButton();
 
@@ -1601,41 +1903,49 @@ function finishEscort() {
    ESCORT BUTTON
 ========================================================= */
 
-function updateEscortButton() {
+function updateEscortButton(){
 
     const button =
-        document.getElementById("escortButton");
+        document.getElementById(
+            "escortButton"
+        );
 
 
-    if (
+    if(
         !escortPurchased ||
         !gameRunning ||
         gameOver
-    ) {
+    ){
 
-        button.classList.add("hidden");
+        button.classList.add(
+            "hidden"
+        );
 
         return;
 
     }
 
 
-    button.classList.remove("hidden");
+    button.classList.remove(
+        "hidden"
+    );
 
 
-    if (escort.active) {
+    if(escort.active){
 
-        button.className = "active-escort";
+        button.className="active";
 
-        button.textContent = "ESCORT ACTIVE";
+        button.textContent=
+            "ESCORT ACTIVE";
 
     }
 
-    else {
+    else{
 
-        button.className = "";
+        button.className="";
 
-        button.textContent = "CALL ESCORT";
+        button.textContent=
+            "CALL ESCORT";
 
     }
 
@@ -1646,13 +1956,14 @@ function updateEscortButton() {
    GAME UPDATE
 ========================================================= */
 
-function updateGame(dt) {
+function updateGame(dt){
 
-    timeOfDayTimer += dt;
+    timeOfDayTimer+=dt;
 
-    score += dt * 0.05;
+    score+=dt*.05;
 
-    missileSpeed += dt * 0.0003;
+    missileSpeed+=
+        dt*.0003;
 
 
     updatePlane(dt);
@@ -1667,12 +1978,19 @@ function updateGame(dt) {
 
 
     /*
-       Player collision
+       Player collision.
     */
 
-    for (const missile of missiles) {
+    for(
+        const missile of missiles
+    ){
 
-        if (collision(plane, missile)) {
+        if(
+            collision(
+                plane,
+                missile
+            )
+        ){
 
             endGame();
 
@@ -1682,25 +2000,14 @@ function updateGame(dt) {
 
     }
 
-
-    /*
-       Remove old missiles
-    */
-
-    missiles =
-        missiles.filter(
-            missile =>
-                missile.x > -150
-        );
-
 }
 
 
 /* =========================================================
-   DRAW GAME
+   DRAW
 ========================================================= */
 
-function drawGame() {
+function drawGame(){
 
     drawBackground();
 
@@ -1715,12 +2022,18 @@ function drawGame() {
     drawPlane();
 
 
-    document.getElementById("score").textContent =
-        "Score: " + Math.floor(score);
+    document
+        .getElementById("score")
+        .textContent=
+        "Score: "+
+        Math.floor(score);
 
 
-    document.getElementById("coins").textContent =
-        "🪙 Coins: " + savedCoins;
+    document
+        .getElementById("coins")
+        .textContent=
+        "🪙 Coins: "+
+        savedCoins;
 
 }
 
@@ -1729,44 +2042,52 @@ function drawGame() {
    GAME OVER
 ========================================================= */
 
-function endGame() {
+function endGame(){
 
-    if (gameOver) {
+    if(gameOver)
         return;
-    }
 
 
-    gameOver = true;
+    gameOver=true;
 
-    gameRunning = false;
+    gameRunning=false;
 
-    moveUp = false;
-    moveDown = false;
+    moveUp=false;
+    moveDown=false;
 
 
-    if (escort.active) {
+    if(escort.active)
         finishEscort();
-    }
-
-
-    document.getElementById("finalScore").textContent =
-        "Score: " + Math.floor(score);
-
-
-    document.getElementById("finalCoins").textContent =
-        "Coins: " + savedCoins;
 
 
     document
-        .getElementById("gameOverScreen")
-        .classList.remove("hidden");
+        .getElementById("finalScore")
+        .textContent=
+        "Score: "+
+        Math.floor(score);
+
+
+    document
+        .getElementById("finalCoins")
+        .textContent=
+        "Coins: "+
+        savedCoins;
+
+
+    document
+        .getElementById(
+            "gameOverScreen"
+        )
+        .classList.remove(
+            "hidden"
+        );
 
 
     updateEscortButton();
 
 
     /*
-       Game-over sound
+       Game-over sound.
     */
 
     playSound();
@@ -1775,59 +2096,61 @@ function endGame() {
 
 
 /* =========================================================
-   START GAME
+   START
 ========================================================= */
 
-function startGame() {
+function startGame(){
 
     playSound();
 
 
-    score = 0;
+    score=0;
 
-    missileTimer = 0;
+    missileTimer=0;
 
-    coinTimer = 0;
+    coinTimer=0;
 
-    missileSpeed = 5;
+    missileSpeed=5;
 
-    timeOfDayTimer = 0;
-
-
-    missiles = [];
-
-    coinObjects = [];
+    timeOfDayTimer=0;
 
 
-    plane.x = 120;
+    missiles=[];
 
-    plane.y =
-        canvas.height / 2 -
-        plane.height / 2;
+    coinObjects=[];
 
 
-    gameOver = false;
+    plane.x=120;
 
-    gameRunning = true;
+    plane.y=
+        canvas.height/2-
+        plane.height/2;
 
 
-    escort.active = false;
+    gameOver=false;
 
-    escort.timer = 0;
+    gameRunning=true;
 
-    escort.state = "none";
 
-    escort.shots = [];
+    finishEscort();
 
 
     document
-        .getElementById("startScreen")
-        .classList.add("hidden");
+        .getElementById(
+            "startScreen"
+        )
+        .classList.add(
+            "hidden"
+        );
 
 
     document
-        .getElementById("gameOverScreen")
-        .classList.add("hidden");
+        .getElementById(
+            "gameOverScreen"
+        )
+        .classList.add(
+            "hidden"
+        );
 
 
     updateEscortButton();
@@ -1836,31 +2159,27 @@ function startGame() {
 
 
 /* =========================================================
-   RESTART
-========================================================= */
-
-document
-    .getElementById("restartButton")
-    .addEventListener("click", () => {
-
-        playSound();
-
-        startGame();
-
-    });
-
-
-/* =========================================================
    START BUTTON
 ========================================================= */
 
 document
     .getElementById("startButton")
-    .addEventListener("click", () => {
+    .addEventListener(
+        "click",
+        startGame
+    );
 
-        startGame();
 
-    });
+/* =========================================================
+   RESTART
+========================================================= */
+
+document
+    .getElementById("restartButton")
+    .addEventListener(
+        "click",
+        startGame
+    );
 
 
 /* =========================================================
@@ -1869,38 +2188,46 @@ document
 
 document
     .getElementById("escortButton")
-    .addEventListener("click", () => {
-
-        activateEscort();
-
-    });
+    .addEventListener(
+        "click",
+        activateEscort
+    );
 
 
 /* =========================================================
    SHOP
 ========================================================= */
 
-let shopWasRunning = false;
+let shopWasRunning=false;
 
 
-function openShop() {
+function openShop(){
 
-    shopWasRunning = gameRunning;
+    shopWasRunning=
+        gameRunning;
 
-    gameRunning = false;
 
-    moveUp = false;
-    moveDown = false;
+    gameRunning=false;
+
+
+    moveUp=false;
+    moveDown=false;
 
 
     document
-        .getElementById("shopScreen")
-        .classList.remove("hidden");
+        .getElementById(
+            "shopScreen"
+        )
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
-        .getElementById("mobileControls")
-        .style.display = "none";
+        .getElementById(
+            "mobileControls"
+        )
+        .style.display="none";
 
 
     updateShopCoins();
@@ -1914,21 +2241,30 @@ function openShop() {
 }
 
 
-function closeShop() {
+function closeShop(){
 
     document
-        .getElementById("shopScreen")
-        .classList.add("hidden");
+        .getElementById(
+            "shopScreen"
+        )
+        .classList.add(
+            "hidden"
+        );
 
 
     document
-        .getElementById("mobileControls")
-        .style.display = "flex";
+        .getElementById(
+            "mobileControls"
+        )
+        .style.display="flex";
 
 
-    if (shopWasRunning && !gameOver) {
+    if(
+        shopWasRunning &&
+        !gameOver
+    ){
 
-        gameRunning = true;
+        gameRunning=true;
 
     }
 
@@ -1938,9 +2274,53 @@ function closeShop() {
 }
 
 
-function updateShopCoins() {
+/* =========================================================
+   SHOP OPEN BUTTONS
+========================================================= */
 
-    document.getElementById("shopCoins").textContent =
+document
+    .getElementById("shopButton")
+    .addEventListener(
+        "click",
+        openShop
+    );
+
+
+document
+    .getElementById("startShopButton")
+    .addEventListener(
+        "click",
+        openShop
+    );
+
+
+document
+    .getElementById("gameOverShopButton")
+    .addEventListener(
+        "click",
+        openShop
+    );
+
+
+document
+    .getElementById("closeShopButton")
+    .addEventListener(
+        "click",
+        closeShop
+    );
+
+
+/* =========================================================
+   SHOP COINS
+========================================================= */
+
+function updateShopCoins(){
+
+    document
+        .getElementById(
+            "shopCoins"
+        )
+        .textContent=
         savedCoins;
 
 }
@@ -1950,7 +2330,7 @@ function updateShopCoins() {
    SHOP TABS
 ========================================================= */
 
-function showShopTab(tab) {
+function showShopTab(tab){
 
     document
         .getElementById("content737")
@@ -1978,7 +2358,7 @@ function showShopTab(tab) {
         .classList.remove("selected");
 
 
-    if (tab === "737") {
+    if(tab==="737"){
 
         document
             .getElementById("content737")
@@ -1991,7 +2371,7 @@ function showShopTab(tab) {
     }
 
 
-    if (tab === "Special") {
+    if(tab==="Special"){
 
         document
             .getElementById("contentSpecial")
@@ -2004,7 +2384,7 @@ function showShopTab(tab) {
     }
 
 
-    if (tab === "Abilities") {
+    if(tab==="Abilities"){
 
         document
             .getElementById("contentAbilities")
@@ -2021,212 +2401,185 @@ function showShopTab(tab) {
 
 document
     .getElementById("tab737")
-    .addEventListener("click", () => {
-
-        playSound();
-        showShopTab("737");
-
-    });
+    .addEventListener(
+        "click",
+        ()=>{
+            playSound();
+            showShopTab("737");
+        }
+    );
 
 
 document
     .getElementById("tabSpecial")
-    .addEventListener("click", () => {
-
-        playSound();
-        showShopTab("Special");
-
-    });
+    .addEventListener(
+        "click",
+        ()=>{
+            playSound();
+            showShopTab("Special");
+        }
+    );
 
 
 document
     .getElementById("tabAbilities")
-    .addEventListener("click", () => {
-
-        playSound();
-        showShopTab("Abilities");
-
-    });
-
-
-/* =========================================================
-   SHOP OPEN BUTTONS
-========================================================= */
-
-document
-    .getElementById("shopButton")
-    .addEventListener("click", () => {
-
-        playSound();
-        openShop();
-
-    });
-
-
-document
-    .getElementById("startShopButton")
-    .addEventListener("click", () => {
-
-        playSound();
-        openShop();
-
-    });
-
-
-document
-    .getElementById("gameOverShopButton")
-    .addEventListener("click", () => {
-
-        playSound();
-        openShop();
-
-    });
-
-
-document
-    .getElementById("closeShopButton")
-    .addEventListener("click", () => {
-
-        playSound();
-        closeShop();
-
-    });
+    .addEventListener(
+        "click",
+        ()=>{
+            playSound();
+            showShopTab("Abilities");
+        }
+    );
 
 
 /* =========================================================
-   SHOP BUTTON STATE
+   SHOP BUTTON STATES
 ========================================================= */
 
-function updateShopButtons() {
+function updateShopButtons(){
 
     const defaultButton =
-        document.getElementById("equipDefaultButton");
+        document.getElementById(
+            "equipDefaultButton"
+        );
+
 
     const skinButton =
-        document.getElementById("skin1Button");
+        document.getElementById(
+            "skin1Button"
+        );
+
 
     const taklaButton =
-        document.getElementById("taklaButton");
+        document.getElementById(
+            "taklaButton"
+        );
+
 
     const escortButton =
-        document.getElementById("escortBuyButton");
+        document.getElementById(
+            "escortBuyButton"
+        );
 
 
-    /*
-       DEFAULT
-    */
+    /* DEFAULT */
 
-    if (selectedSkin === "default") {
+    if(selectedSkin==="default"){
 
-        defaultButton.textContent = "EQUIPPED";
+        defaultButton.textContent=
+            "EQUIPPED";
 
-        defaultButton.className = "equipped";
-
-    }
-
-    else {
-
-        defaultButton.textContent = "EQUIP";
-
-        defaultButton.className = "";
+        defaultButton.className=
+            "equipped";
 
     }
 
+    else{
 
-    /*
-       SKIN 1
-    */
+        defaultButton.textContent=
+            "EQUIP";
 
-    const skin1Purchased =
-        localStorage.getItem("skin1Purchased") === "true";
+        defaultButton.className="";
+
+    }
 
 
-    if (!skin1Purchased) {
+    /* SKIN 1 */
 
-        skinButton.textContent =
+    const skinPurchased =
+        localStorage.getItem(
+            "skin1Purchased"
+        )==="true";
+
+
+    if(!skinPurchased){
+
+        skinButton.textContent=
             "BUY - 50 COINS";
 
-        skinButton.className = "";
+        skinButton.className="";
 
     }
 
-    else if (selectedSkin === "skin1") {
+    else if(
+        selectedSkin==="skin1"
+    ){
 
-        skinButton.textContent =
+        skinButton.textContent=
             "EQUIPPED";
 
-        skinButton.className =
+        skinButton.className=
             "equipped";
 
     }
 
-    else {
+    else{
 
-        skinButton.textContent =
+        skinButton.textContent=
             "EQUIP";
 
-        skinButton.className = "";
+        skinButton.className="";
 
     }
 
 
-    /*
-       TAKLA
-    */
+    /* TAKLA */
 
     const taklaPurchased =
-        localStorage.getItem("taklaPurchased") === "true";
+        localStorage.getItem(
+            "taklaPurchased"
+        )==="true";
 
 
-    if (!taklaPurchased) {
+    if(!taklaPurchased){
 
-        taklaButton.textContent =
+        taklaButton.textContent=
             "BUY - 150 COINS";
 
-        taklaButton.className = "";
+        taklaButton.className="";
 
     }
 
-    else if (selectedSkin === "takla") {
+    else if(
+        selectedSkin==="takla"
+    ){
 
-        taklaButton.textContent =
+        taklaButton.textContent=
             "EQUIPPED";
 
-        taklaButton.className =
+        taklaButton.className=
             "equipped";
 
     }
 
-    else {
+    else{
 
-        taklaButton.textContent =
+        taklaButton.textContent=
             "EQUIP";
 
-        taklaButton.className = "";
+        taklaButton.className="";
 
     }
 
 
-    /*
-       ESCORT
-    */
+    /* ESCORT */
 
-    if (escortPurchased) {
+    if(escortPurchased){
 
-        escortButton.textContent =
+        escortButton.textContent=
             "PURCHASED";
 
-        escortButton.className =
+        escortButton.className=
             "equipped";
 
     }
 
-    else {
+    else{
 
-        escortButton.textContent =
+        escortButton.textContent=
             "BUY - 100 COINS";
 
-        escortButton.className = "";
+        escortButton.className="";
 
     }
 
@@ -2234,25 +2587,30 @@ function updateShopButtons() {
 
 
 /* =========================================================
-   DEFAULT AIRCRAFT
+   DEFAULT
 ========================================================= */
 
 document
-    .getElementById("equipDefaultButton")
-    .addEventListener("click", () => {
+    .getElementById(
+        "equipDefaultButton"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
 
-        selectedSkin = "default";
+            selectedSkin="default";
 
-        localStorage.setItem(
-            "selected737Skin",
-            "default"
-        );
+            localStorage.setItem(
+                "selected737Skin",
+                "default"
+            );
 
-        playSound();
+            playSound();
 
-        updateShopButtons();
+            updateShopButtons();
 
-    });
+        }
+    );
 
 
 /* =========================================================
@@ -2260,54 +2618,66 @@ document
 ========================================================= */
 
 document
-    .getElementById("skin1Button")
-    .addEventListener("click", () => {
+    .getElementById(
+        "skin1Button"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
 
-        const purchased =
-            localStorage.getItem("skin1Purchased") === "true";
+            const purchased =
+                localStorage.getItem(
+                    "skin1Purchased"
+                )==="true";
 
 
-        if (!purchased) {
+            if(!purchased){
 
-            if (savedCoins < 50) {
+                if(savedCoins<50){
 
-                alert("You need 50 coins.");
+                    alert(
+                        "You need 50 coins."
+                    );
 
-                return;
+                    return;
+
+                }
+
+
+                savedCoins-=50;
+
+
+                localStorage.setItem(
+                    "skyEscapeCoins",
+                    savedCoins
+                );
+
+
+                localStorage.setItem(
+                    "skin1Purchased",
+                    "true"
+                );
 
             }
 
 
-            savedCoins -= 50;
+            selectedSkin="skin1";
+
 
             localStorage.setItem(
-                "skyEscapeCoins",
-                savedCoins
+                "selected737Skin",
+                "skin1"
             );
 
-            localStorage.setItem(
-                "skin1Purchased",
-                "true"
-            );
+
+            playSound();
+
+            updateShopCoins();
+
+            updateShopButtons();
 
         }
-
-
-        selectedSkin = "skin1";
-
-        localStorage.setItem(
-            "selected737Skin",
-            "skin1"
-        );
-
-
-        playSound();
-
-        updateShopCoins();
-
-        updateShopButtons();
-
-    });
+    );
 
 
 /* =========================================================
@@ -2315,54 +2685,66 @@ document
 ========================================================= */
 
 document
-    .getElementById("taklaButton")
-    .addEventListener("click", () => {
+    .getElementById(
+        "taklaButton"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
 
-        const purchased =
-            localStorage.getItem("taklaPurchased") === "true";
+            const purchased =
+                localStorage.getItem(
+                    "taklaPurchased"
+                )==="true";
 
 
-        if (!purchased) {
+            if(!purchased){
 
-            if (savedCoins < 150) {
+                if(savedCoins<150){
 
-                alert("You need 150 coins.");
+                    alert(
+                        "You need 150 coins."
+                    );
 
-                return;
+                    return;
+
+                }
+
+
+                savedCoins-=150;
+
+
+                localStorage.setItem(
+                    "skyEscapeCoins",
+                    savedCoins
+                );
+
+
+                localStorage.setItem(
+                    "taklaPurchased",
+                    "true"
+                );
 
             }
 
 
-            savedCoins -= 150;
+            selectedSkin="takla";
+
 
             localStorage.setItem(
-                "skyEscapeCoins",
-                savedCoins
+                "selected737Skin",
+                "takla"
             );
 
-            localStorage.setItem(
-                "taklaPurchased",
-                "true"
-            );
+
+            playSound();
+
+            updateShopCoins();
+
+            updateShopButtons();
 
         }
-
-
-        selectedSkin = "takla";
-
-        localStorage.setItem(
-            "selected737Skin",
-            "takla"
-        );
-
-
-        playSound();
-
-        updateShopCoins();
-
-        updateShopButtons();
-
-    });
+    );
 
 
 /* =========================================================
@@ -2370,70 +2752,81 @@ document
 ========================================================= */
 
 document
-    .getElementById("escortBuyButton")
-    .addEventListener("click", () => {
+    .getElementById(
+        "escortBuyButton"
+    )
+    .addEventListener(
+        "click",
+        ()=>{
 
-        if (escortPurchased) {
-            return;
+            if(escortPurchased)
+                return;
+
+
+            if(savedCoins<100){
+
+                alert(
+                    "You need 100 coins."
+                );
+
+                return;
+
+            }
+
+
+            savedCoins-=100;
+
+            escortPurchased=true;
+
+
+            localStorage.setItem(
+                "skyEscapeCoins",
+                savedCoins
+            );
+
+
+            localStorage.setItem(
+                "escortAbilityPurchased",
+                "true"
+            );
+
+
+            playSound();
+
+            updateShopCoins();
+
+            updateShopButtons();
+
         }
-
-
-        if (savedCoins < 100) {
-
-            alert("You need 100 coins.");
-
-            return;
-
-        }
-
-
-        savedCoins -= 100;
-
-        escortPurchased = true;
-
-
-        localStorage.setItem(
-            "skyEscapeCoins",
-            savedCoins
-        );
-
-        localStorage.setItem(
-            "escortAbilityPurchased",
-            "true"
-        );
-
-
-        playSound();
-
-        updateShopCoins();
-
-        updateShopButtons();
-
-    });
+    );
 
 
 /* =========================================================
    GAME LOOP
 ========================================================= */
 
-let lastTime = performance.now();
+let lastTime=
+    performance.now();
 
 
-function loop(currentTime) {
+function loop(now){
 
-    const delta =
+    const dt=
         Math.min(
             2,
-            (currentTime - lastTime) / 16.67
+            (now-lastTime)/16.67
         );
 
 
-    lastTime = currentTime;
+    lastTime=now;
 
 
-    if (gameRunning && !gameOver) {
+    if(
+        gameRunning &&
+        !gameOver
+    ){
 
-        updateGame(delta);
+        updateGame(dt);
 
     }
 
@@ -2450,7 +2843,7 @@ requestAnimationFrame(loop);
 
 
 /* =========================================================
-   INITIAL UI
+   INITIAL
 ========================================================= */
 
 updateShopCoins();
@@ -2463,18 +2856,28 @@ updateEscortButton();
 
 
 /* =========================================================
-   PREVENT PAGE SCROLL ON MOBILE
+   MOBILE SCROLL PREVENTION
 ========================================================= */
 
 document.addEventListener(
     "touchmove",
-    function(e) {
+    e=>{
         e.preventDefault();
     },
-    { passive: false }
+    {passive:false}
 );
 
 </script>
 
 </body>
 </html>
+
+What I changed
+
+Escort missiles: the fighter now searches for an incoming missile in front of it, aims at that missile, and fires repeatedly. The defensive missile has its own "vx"/"vy", so it can actually fly toward the target instead of only moving horizontally.
+
+No more squashed sprites: instead of forcing "plane.png", "escort.png", and "missile.png" into arbitrary dimensions, the "drawImageContain()" function keeps their original aspect ratio.
+
+UI: I kept the simple earlier arrangement rather than making the game controls cover the screen.
+
+Replace your current "index.html" with this version. Keep "escort.png" and "missile.png" in the same repository folder as "index.html".
