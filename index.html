@@ -2,989 +2,2479 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2D FLIGHT SIM</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Pixel-style font; Recons is preferred if installed or loaded locally. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<title>2D FLIGHT SIM</title>
 
 <style>
 * {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-:root {
-  --yellow: #ffe34d;
-  --blue: #1689e8;
-  --dark: #101b2d;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
 }
 
 body {
-  margin: 0;
-  overflow: hidden;
-  background: #071426;
-  color: white;
-  font-family: Arial, sans-serif;
-  user-select: none;
+    position: relative;
 }
 
-#gameCanvas {
-  display: block;
-  width: 100vw;
-  height: 100dvh;
-  background: #75c9ff;
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background: #87ceeb;
 }
 
-.pixel-font {
-  font-family: "Recons", "Press Start 2P", monospace;
-  font-weight: 900;
-  letter-spacing: 1px;
+/* ================= TITLE ================= */
+
+#title {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+
+    color: white;
+    font-size: clamp(24px, 5vw, 48px);
+    font-weight: 900;
+    letter-spacing: 3px;
+
+    text-shadow:
+        3px 3px 0 #000,
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000;
+
+    font-family: "Recons", "Press Start 2P", Arial, sans-serif;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
-#topBar {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  z-index: 3;
-}
+#updateText {
+    position: fixed;
+    top: 12px;
+    left: 15px;
+    z-index: 20;
 
-.hud {
-  background: #101b2ddd;
-  border: 2px solid #ffffff66;
-  border-radius: 10px;
-  padding: 9px 12px;
-  font-size: 14px;
-  font-weight: bold;
-  box-shadow: 0 3px 0 #0004;
-}
+    color: yellow;
+    font-size: 17px;
+    font-weight: bold;
 
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: white;
-  background: var(--blue);
-  font-weight: 900;
-  font-size: 15px;
-  cursor: pointer;
-  box-shadow: 0 4px 0 #07549a;
-  touch-action: manipulation;
-}
+    text-shadow: 2px 2px 0 #000;
 
-button:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #07549a;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: .45;
-}
-
-#shopButton {
-  background: #f1b82d;
-  color: #302300;
-  box-shadow: 0 4px 0 #a46b00;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  background: #06101bc2;
-  backdrop-filter: blur(4px);
-}
-
-.panel {
-  width: min(520px, 100%);
-  max-height: 90dvh;
-  overflow-y: auto;
-  text-align: center;
-  background: linear-gradient(160deg, #203d61, #101b2d);
-  border: 3px solid #ffffff66;
-  border-radius: 20px;
-  padding: 24px 18px;
-  box-shadow: 0 12px 40px #0008;
-}
-
-.game-title {
-  font-family: "Recons", "Press Start 2P", monospace;
-  font-size: clamp(23px, 5vw, 40px);
-  line-height: 1.5;
-  color: white;
-  text-shadow: 3px 4px 0 #173b61, 0 0 18px #55baff77;
-  margin: 10px 0 18px;
-}
-
-.update-text {
-  display: inline-block;
-  color: #ffe600;
-  font-weight: 1000;
-  font-size: clamp(15px, 3vw, 22px);
-  text-shadow: 2px 3px 0 #7d4500, 0 0 12px #ffed65;
-  transform-origin: center;
-  animation: bounceUpdate .8s ease-in-out infinite alternate;
+    animation: bounceUpdate 0.8s infinite alternate;
 }
 
 @keyframes bounceUpdate {
-  from { transform: translateY(0) rotate(-2deg); }
-  to   { transform: translateY(-10px) rotate(2deg); }
-}
-
-.subtitle {
-  color: #c8e7ff;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-7px);
+    }
 }
 
 #version {
-  position: absolute;
-  bottom: 10px;
-  right: 12px;
-  z-index: 2;
-  color: #fff;
-  font-size: 12px;
-  font-weight: bold;
-  text-shadow: 1px 2px 3px #000;
-  pointer-events: none;
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    z-index: 20;
+
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+
+    text-shadow: 2px 2px 0 #000;
 }
 
-#shopWindow {
-  z-index: 10;
+/* ================= TOP UI ================= */
+
+#score {
+    position: fixed;
+    top: 78px;
+    left: 15px;
+    z-index: 20;
+
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow: 2px 2px 0 #000;
 }
 
-.shop-heading {
-  font-size: 25px;
-  margin: 2px 0 8px;
+#coins {
+    position: fixed;
+    top: 105px;
+    left: 15px;
+    z-index: 20;
+
+    color: #ffd700;
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow: 2px 2px 0 #000;
 }
 
-.shop-balance {
-  color: var(--yellow);
-  font-weight: bold;
-  margin-bottom: 18px;
+/* ================= BUTTONS ================= */
+
+button {
+    border: none;
+    border-radius: 10px;
+
+    background: rgba(0,0,0,0.7);
+    color: white;
+
+    padding: 11px 17px;
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
 }
 
-.shop-tabs {
-  display: flex;
-  gap: 8px;
-  margin: 12px 0 18px;
+button:active {
+    transform: scale(0.95);
 }
 
-.shop-tabs button {
-  flex: 1;
-  padding: 13px 6px;
-  background: #314963;
-  box-shadow: 0 4px 0 #182b3e;
+#shopButton {
+    position: fixed;
+    top: 75px;
+    right: 15px;
+    z-index: 30;
 }
 
-.shop-tabs button.active {
-  color: #222;
-  background: var(--yellow);
-  box-shadow: 0 4px 0 #a98900;
+#escortButton {
+    position: fixed;
+    right: 15px;
+    top: 125px;
+    z-index: 30;
+
+    background: #1565c0;
 }
 
-.shop-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.skin-card {
-  min-width: 0;
-  padding: 12px 8px;
-  background: #ffffff12;
-  border: 2px solid #ffffff28;
-  border-radius: 14px;
-}
-
-.skin-card img {
-  width: 100%;
-  height: 85px;
-  object-fit: contain;
-  image-rendering: auto;
-}
-
-.skin-card h3 {
-  font-size: 15px;
-  margin: 8px 0;
-}
-
-.skin-card p {
-  color: #c6d8e9;
-  font-size: 12px;
-  min-height: 15px;
-}
-
-.skin-card button {
-  width: 100%;
-  padding: 10px 5px;
-  font-size: 12px;
-}
-
-.special-card {
-  grid-column: 1 / -1;
-}
-
-.special-card img {
-  height: 115px;
-}
-
-.coming-soon {
-  filter: grayscale(1);
-  opacity: .48;
-  background: #5e6670;
-  border: 2px dashed #b6bec7;
-}
-
-.coming-soon button {
-  background: #777;
-  color: #ddd;
-  box-shadow: none;
-}
-
-#mobileControls {
-  position: absolute;
-  z-index: 3;
-  bottom: 32px;
-  left: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.control-button {
-  width: 62px;
-  height: 56px;
-  padding: 0;
-  font-size: 25px;
-  border-radius: 14px;
-  background: #101b2dcc;
-  border: 2px solid #ffffff66;
-  box-shadow: 0 4px 0 #0007;
+#escortButton.active-escort {
+    background: #e65100;
 }
 
 .hidden {
-  display: none !important;
+    display: none !important;
 }
 
-@media (max-width: 450px) {
-  .panel { padding: 20px 12px; }
-  .hud { padding: 8px; font-size: 12px; }
-  .shop-heading { font-size: 21px; }
-  .skin-card img { height: 68px; }
-  .special-card img { height: 95px; }
-  button { font-size: 14px; }
+/* ================= MOBILE CONTROLS ================= */
+
+#mobileControls {
+    position: fixed;
+    bottom: 25px;
+    left: 0;
+    width: 100%;
+    z-index: 25;
+
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+
+    pointer-events: none;
+}
+
+.controlGroup {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.controlButton {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+
+    color: white;
+    font-size: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ================= OVERLAYS ================= */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+
+    background: rgba(0,0,0,0.75);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel {
+    width: min(90%, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: #222;
+    color: white;
+
+    border-radius: 18px;
+    padding: 22px;
+
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+/* ================= GAME OVER ================= */
+
+#gameOverPanel button {
+    margin-top: 10px;
+}
+
+/* ================= SHOP ================= */
+
+#shopPanel {
+    width: min(95%, 600px);
+}
+
+.shopTabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.shopTab {
+    flex: 1;
+    padding: 10px 5px;
+    background: #444;
+}
+
+.shopTab.selected {
+    background: #1976d2;
+}
+
+.shopContent {
+    display: none;
+}
+
+.shopContent.active {
+    display: block;
+}
+
+.shopItem {
+    background: #333;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.shopItem img {
+    width: 110px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.shopItem button {
+    background: #1976d2;
+    margin-top: 8px;
+}
+
+.shopItem button.equipped {
+    background: #2e7d32;
+}
+
+.comingSoon {
+    opacity: 0.45;
+}
+
+.closeShop {
+    background: #b71c1c !important;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* ================= MENU ================= */
+
+#startScreen {
+    z-index: 45;
+}
+
+.startButton {
+    background: #1976d2;
+    font-size: 18px;
+    padding: 13px 28px;
+}
+
+.startShopButton {
+    margin-top: 10px;
+    background: #555;
+}
+
+/* ================= ESCORT INFO ================= */
+
+.escortInfo {
+    font-size: 13px;
+    color: #ccc;
+    margin-top: 8px;
+    line-height: 1.5;
 }
 </style>
 </head>
 
 <body>
+
 <canvas id="gameCanvas"></canvas>
 
-<div id="topBar" class="hidden">
-  <div class="hud">✈️ Score: <span id="scoreBox">0</span></div>
-  <div class="hud">🪙 Coins: <span id="coinBox">0</span></div>
-  <button id="shopButton">🛒 SHOP</button>
-</div>
+<div id="title">2D FLIGHT SIM</div>
 
-<div id="menu" class="overlay">
-  <div class="panel">
-    <div style="text-align:left;margin-bottom:12px">
-      <span class="update-text">টাকলা UPDATE!!</span>
+<div id="updateText">টাকলা UPDATE!!</div>
+
+<div id="score">Score: 0</div>
+<div id="coins">🪙 Coins: 0</div>
+
+<button id="shopButton">SHOP</button>
+
+<button id="escortButton" class="hidden">
+    CALL ESCORT
+</button>
+
+<div id="mobileControls">
+    <div class="controlGroup">
+        <button class="controlButton" id="upButton">▲</button>
+        <button class="controlButton" id="downButton">▼</button>
     </div>
-
-    <h1 class="game-title">2D FLIGHT SIM</h1>
-    <div class="subtitle">
-      Take off, dodge missiles and collect coins!<br>
-      Use ↑ ↓ or the on-screen controls.
-    </div>
-
-    <div class="menu-buttons">
-      <button id="startButton">✈️ START FLIGHT</button>
-      <button id="menuShopButton">🛒 AIRCRAFT SHOP</button>
-    </div>
-  </div>
-</div>
-
-<div id="gameOver" class="overlay hidden">
-  <div class="panel">
-    <h1 class="game-title" style="font-size:28px">FLIGHT OVER!</h1>
-    <p>Your score: <strong id="finalScore">0</strong></p>
-    <p>Coins collected: <strong id="runCoins">0</strong></p>
-    <p>Total coins: <strong id="gameOverCoins">0</strong></p>
-    <div class="menu-buttons">
-      <button id="restartButton">🔄 FLY AGAIN</button>
-      <button id="gameOverShopButton">🛒 SHOP</button>
-    </div>
-  </div>
-</div>
-
-<div id="shopWindow" class="overlay hidden">
-  <div class="panel">
-    <h2 class="shop-heading pixel-font">AIRCRAFT SHOP</h2>
-    <div class="shop-balance">🪙 Your coins: <span id="shopCoins">0</span></div>
-
-    <div class="shop-tabs">
-      <button id="tab737" class="active">✈️ 737</button>
-      <button id="tabSpecial">⭐ SPECIAL</button>
-    </div>
-
-    <div id="shop737" class="shop-grid">
-      <div class="skin-card">
-        <img src="plane.png" alt="Default 737">
-        <h3>Classic 737</h3>
-        <p>Original aircraft</p>
-        <button id="equipDefaultButton">EQUIP</button>
-      </div>
-
-      <div class="skin-card">
-        <img src="skin1.png" alt="737 Skin 1">
-        <h3>737 Skin 1</h3>
-        <p>Alternative aircraft skin</p>
-        <button id="equipSkin1Button">EQUIP</button>
-      </div>
-    </div>
-
-    <div id="shopSpecial" class="shop-grid hidden">
-      <div class="skin-card special-card">
-        <img src="takla.png" alt="Takla special plane">
-        <h3>⭐ TAKLA PLANE</h3>
-        <p>Special aircraft</p>
-        <button id="equipTaklaButton">EQUIP</button>
-      </div>
-    </div>
-
-    <div class="skin-card coming-soon" style="margin-top:16px">
-      <h3>🪙 COIN SKIN</h3>
-      <p>New coin designs are on the way!</p>
-      <button disabled>COMING SOON</button>
-    </div>
-
-    <div style="margin-top:20px">
-      <button id="closeShopButton" style="background:#526579;box-shadow:0 4px 0 #2a3948">
-        CLOSE SHOP
-      </button>
-    </div>
-  </div>
-</div>
-
-<div id="mobileControls" class="hidden">
-  <button id="upButton" class="control-button" aria-label="Move up">▲</button>
-  <button id="downButton" class="control-button" aria-label="Move down">▼</button>
 </div>
 
 <div id="version">Version-2.0</div>
 
-<script>
-"use strict";
 
-/* -------------------- ASSETS -------------------- */
+<!-- ================= START SCREEN ================= -->
+
+<div class="overlay" id="startScreen">
+    <div class="panel">
+        <h1>737 SKY ESCAPE</h1>
+
+        <p>
+            Fly your aircraft and avoid the missiles!
+        </p>
+
+        <button class="startButton" id="startButton">
+            START GAME
+        </button>
+
+        <br>
+
+        <button class="startShopButton" id="startShopButton">
+            SHOP
+        </button>
+    </div>
+</div>
+
+
+<!-- ================= GAME OVER ================= -->
+
+<div class="overlay hidden" id="gameOverScreen">
+    <div class="panel" id="gameOverPanel">
+
+        <h1>GAME OVER</h1>
+
+        <p id="finalScore">
+            Score: 0
+        </p>
+
+        <p id="finalCoins">
+            Coins: 0
+        </p>
+
+        <button id="restartButton">
+            RESTART
+        </button>
+
+        <br>
+
+        <button id="gameOverShopButton">
+            SHOP
+        </button>
+
+    </div>
+</div>
+
+
+<!-- ================= SHOP ================= -->
+
+<div class="overlay hidden" id="shopScreen">
+
+    <div class="panel" id="shopPanel">
+
+        <h2>✈ AIRCRAFT SHOP</h2>
+
+        <p>
+            🪙 Coins:
+            <span id="shopCoins">0</span>
+        </p>
+
+        <div class="shopTabs">
+
+            <button class="shopTab" id="tab737">
+                737
+            </button>
+
+            <button class="shopTab" id="tabSpecial">
+                Special
+            </button>
+
+            <button class="shopTab" id="tabAbilities">
+                Abilities
+            </button>
+
+        </div>
+
+
+        <!-- 737 TAB -->
+
+        <div class="shopContent" id="content737">
+
+            <div class="shopItem">
+
+                <img src="plane.png" alt="Default 737">
+
+                <h3>Default 737</h3>
+
+                <p>Free</p>
+
+                <button id="equipDefaultButton">
+                    EQUIP
+                </button>
+
+            </div>
+
+
+            <div class="shopItem">
+
+                <img src="skin1.png" alt="Skin 1">
+
+                <h3>Skin 1</h3>
+
+                <p>50 Coins</p>
+
+                <button id="skin1Button">
+                    BUY / EQUIP
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- SPECIAL TAB -->
+
+        <div class="shopContent" id="contentSpecial">
+
+            <div class="shopItem">
+
+                <img src="takla.png" alt="Takla">
+
+                <h3>TAKLA</h3>
+
+                <p>Special aircraft</p>
+
+                <button id="taklaButton">
+                    BUY / EQUIP
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABILITIES TAB -->
+
+        <div class="shopContent" id="contentAbilities">
+
+            <div class="shopItem">
+
+                <h3>✈ ESCORT FIGHTER</h3>
+
+                <p>
+                    Calls an escort fighter that protects your plane
+                    and fires defensive missiles.
+                </p>
+
+                <p>
+                    Cost: <b>100 Coins</b>
+                </p>
+
+                <button id="escortBuyButton">
+                    BUY ESCORT
+                </button>
+
+                <div class="escortInfo">
+                    Escort arrives from behind,
+                    protects you and fires missiles.
+                    It starts retreating after 55 seconds
+                    and disappears at 60 seconds.
+                </div>
+
+            </div>
+
+
+            <div class="shopItem comingSoon">
+
+                <h3>Coin Skin</h3>
+
+                <p>Coming Soon</p>
+
+                <button disabled>
+                    COMING SOON
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button class="closeShop" id="closeShopButton">
+            CLOSE
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-function loadImage(src) {
-  const img = new Image();
-  img.src = src;
-  return img;
-}
 
-const images = {
-  plane: loadImage("plane.png"),
-  skin1: loadImage("skin1.png"),
-  takla: loadImage("takla.png"),
-  missile: loadImage("missile.png")
-};
+/* =========================================================
+   IMAGES
+========================================================= */
 
-/* sound1.mp3 is used for button actions and collecting coins. */
-const soundEffect = new Audio("sound1.mp3");
-soundEffect.preload = "auto";
-soundEffect.volume = 0.55;
+const planeImage = new Image();
+const skin1Image = new Image();
+const taklaImage = new Image();
+const missileImage = new Image();
+const escortImage = new Image();
+
+planeImage.src = "plane.png";
+skin1Image.src = "skin1.png";
+taklaImage.src = "takla.png";
+missileImage.src = "missile.png";
+escortImage.src = "escort.png";
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
 
 function playSound() {
-  try {
-    soundEffect.currentTime = 0;
-    const result = soundEffect.play();
-    if (result && typeof result.catch === "function") {
-      result.catch(() => {});
-    }
-  } catch (error) {
-    // The game can still run if audio is unavailable.
-  }
+
+    try {
+
+        const sound = new Audio("sound1 .mp3");
+
+        sound.volume = 1.0;
+
+        sound.play().catch(() => {
+            // Browser may block audio until user interaction.
+        });
+
+    } catch (e) {}
+
 }
 
-/* -------------------- GAME STATE -------------------- */
-let W = 0;
-let H = 0;
-let dpr = 1;
+
+/* =========================================================
+   GAME VARIABLES
+========================================================= */
 
 let gameRunning = false;
-let gameStarted = false;
 let gameOver = false;
-let shopWasRunning = false;
 
 let score = 0;
-let runCoins = 0;
-let savedCoins = readNumber("skyEscapeCoins", 0);
 
-let selectedSkin = localStorage.getItem("selected737Skin") || "plane";
-if (!["plane", "skin1", "takla"].includes(selectedSkin)) {
-  selectedSkin = "plane";
-}
+let savedCoins =
+    parseInt(localStorage.getItem("skyEscapeCoins") || "0");
 
-let frame = 0;
-let speed = 3;
-let spawnTimer = 0;
-let coinTimer = 0;
-let animationId = 0;
-let lastTime = 0;
-let timeOfDayTimer = 0;
-let skyPhase = 0;
+let selectedSkin =
+    localStorage.getItem("selected737Skin") || "default";
+
+let escortPurchased =
+    localStorage.getItem("escortAbilityPurchased") === "true";
+
+
+/* =========================================================
+   PLANE
+========================================================= */
 
 const plane = {
-  x: 85,
-  y: 200,
-  width: 74,
-  height: 42,
-  speed: 5
+
+    x: 120,
+    y: 300,
+
+    width: 90,
+    height: 55,
+
+    speed: 5
+
 };
 
-let missiles = [];
-let coins = [];
-let clouds = [];
 
-const keys = { up: false, down: false };
+/* =========================================================
+   RESIZE
+========================================================= */
 
-function readNumber(key, fallback) {
-  try {
-    const value = Number(localStorage.getItem(key));
-    return Number.isFinite(value) && value >= 0 ? value : fallback;
-  } catch (error) {
-    return fallback;
-  }
-}
-
-function saveProgress() {
-  try {
-    localStorage.setItem("skyEscapeCoins", String(savedCoins));
-    localStorage.setItem("selected737Skin", selectedSkin);
-  } catch (error) {
-    // The game still works if browser storage is unavailable.
-  }
-}
-
-function currentPlaneImage() {
-  return images[selectedSkin] || images.plane;
-}
-
-/* -------------------- RESIZE -------------------- */
 function resizeCanvas() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth;
-  H = window.innerHeight;
 
-  canvas.width = Math.round(W * dpr);
-  canvas.height = Math.round(H * dpr);
-  canvas.style.width = W + "px";
-  canvas.style.height = H + "px";
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  plane.x = Math.min(plane.x, W * 0.35);
-  plane.y = Math.max(50, Math.min(plane.y, H - 80));
-
-  createClouds();
-}
-
-/* -------------------- BACKGROUND -------------------- */
-function createClouds() {
-  clouds = [];
-  for (let i = 0; i < 9; i++) {
-    clouds.push({
-      x: Math.random() * Math.max(W, 1),
-      y: 35 + Math.random() * Math.max(H - 100, 1),
-      size: 18 + Math.random() * 32,
-      speed: 0.4 + Math.random() * 0.8
-    });
-  }
-}
-
-function drawBackground() {
-  const phase = Math.floor(timeOfDayTimer / 1800) % 3;
-
-  let top, bottom;
-  if (phase === 0) {
-    top = "#56b7f5";
-    bottom = "#d8f4ff";
-  } else if (phase === 1) {
-    top = "#ff9e66";
-    bottom = "#ffe0a1";
-  } else {
-    top = "#07142e";
-    bottom = "#203a68";
-  }
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, H);
-  gradient.addColorStop(0, top);
-  gradient.addColorStop(1, bottom);
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, W, H);
-
-  if (phase === 2) {
-    ctx.fillStyle = "#fff8c8";
-    for (let i = 0; i < 45; i++) {
-      const x = (i * 97 + 31) % Math.max(W, 1);
-      const y = (i * 67 + 19) % Math.max(H * 0.75, 1);
-      ctx.fillRect(x, y, 2, 2);
+    if (plane.y > canvas.height - plane.height) {
+        plane.y = canvas.height - plane.height;
     }
-  } else {
-    ctx.fillStyle = phase === 1 ? "#fff1ad" : "#fff9c2";
-    ctx.beginPath();
-    ctx.arc(W - 65, 85, 25, 0, Math.PI * 2);
-    ctx.fill();
-  }
 
-  for (const cloud of clouds) {
-    drawCloud(cloud.x, cloud.y, cloud.size);
-    if (gameRunning) {
-      cloud.x -= cloud.speed + speed * 0.12;
-      if (cloud.x < -cloud.size * 3) {
-        cloud.x = W + cloud.size;
-        cloud.y = 25 + Math.random() * Math.max(H - 90, 1);
-      }
-    }
-  }
-
-  // Distant hills
-  ctx.fillStyle = phase === 2 ? "#172c4a" : "#72b5a0";
-  ctx.beginPath();
-  ctx.moveTo(0, H);
-  ctx.lineTo(0, H * 0.82);
-  for (let x = 0; x <= W + 80; x += 80) {
-    ctx.lineTo(x, H * (0.78 + Math.sin(x * 0.012) * 0.045));
-  }
-  ctx.lineTo(W, H);
-  ctx.closePath();
-  ctx.fill();
 }
-
-function drawCloud(x, y, s) {
-  ctx.fillStyle = "#ffffffb8";
-  ctx.beginPath();
-  ctx.ellipse(x, y, s, s * 0.42, 0, 0, Math.PI * 2);
-  ctx.ellipse(x - s * 0.42, y + 3, s * 0.48, s * 0.32, 0, 0, Math.PI * 2);
-  ctx.ellipse(x + s * 0.38, y + 3, s * 0.48, s * 0.32, 0, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-/* -------------------- DRAW AIRCRAFT -------------------- */
-function drawPlane() {
-  const img = currentPlaneImage();
-
-  if (img && img.complete && img.naturalWidth > 0) {
-    ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
-  } else {
-    // Fallback drawing if an image has not loaded.
-    ctx.fillStyle = selectedSkin === "takla" ? "#ffcf45" : "#f4f8ff";
-    ctx.beginPath();
-    ctx.moveTo(plane.x, plane.y + plane.height * 0.45);
-    ctx.lineTo(plane.x + plane.width, plane.y + plane.height * 0.5);
-    ctx.lineTo(plane.x + plane.width * 0.72, plane.y + plane.height * 0.68);
-    ctx.lineTo(plane.x + plane.width * 0.35, plane.y + plane.height * 0.65);
-    ctx.lineTo(plane.x + plane.width * 0.18, plane.y + plane.height);
-    ctx.lineTo(plane.x + plane.width * 0.1, plane.y + plane.height * 0.55);
-    ctx.closePath();
-    ctx.fill();
-  }
-}
-
-/* -------------------- MISSILES -------------------- */
-function spawnMissile() {
-  const h = 28 + Math.random() * 12;
-  missiles.push({
-    x: W + 35,
-    y: 65 + Math.random() * Math.max(H - 150, 1),
-    width: 48,
-    height: h
-  });
-}
-
-function drawMissile(m) {
-  const img = images.missile;
-  if (img && img.complete && img.naturalWidth > 0) {
-    ctx.drawImage(img, m.x, m.y, m.width, m.height);
-  } else {
-    ctx.fillStyle = "#e94a43";
-    ctx.beginPath();
-    ctx.moveTo(m.x, m.y + m.height * 0.5);
-    ctx.lineTo(m.x + m.width * 0.72, m.y);
-    ctx.lineTo(m.x + m.width, m.y + m.height * 0.5);
-    ctx.lineTo(m.x + m.width * 0.72, m.y + m.height);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "#ffb64a";
-    ctx.fillRect(m.x + m.width * 0.05, m.y + m.height * 0.34, 8, m.height * 0.32);
-  }
-}
-
-/* -------------------- COINS -------------------- */
-function spawnCoin() {
-  coins.push({
-    x: W + 20,
-    y: 65 + Math.random() * Math.max(H - 150, 1),
-    radius: 11,
-    spin: Math.random() * Math.PI
-  });
-}
-
-function drawCoin(c) {
-  c.spin += 0.08;
-  const width = Math.max(4, Math.abs(Math.cos(c.spin)) * c.radius * 2);
-
-  ctx.fillStyle = "#9b6700";
-  ctx.beginPath();
-  ctx.ellipse(c.x, c.y + 2, width, c.radius, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = "#ffd83d";
-  ctx.beginPath();
-  ctx.ellipse(c.x, c.y, width * 0.86, c.radius * 0.86, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = "#fff3a1";
-  ctx.font = "bold 13px Arial";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("$", c.x, c.y);
-}
-
-/* -------------------- COLLISIONS -------------------- */
-function overlaps(a, b) {
-  return (
-    a.x < b.x + b.width &&
-    a.x + a.width > b.x &&
-    a.y < b.y + b.height &&
-    a.y + a.height > b.y
-  );
-}
-
-function collectCoins() {
-  const planeBox = {
-    x: plane.x + 8,
-    y: plane.y + 5,
-    width: plane.width - 16,
-    height: plane.height - 10
-  };
-
-  coins = coins.filter(c => {
-    const coinBox = {
-      x: c.x - c.radius,
-      y: c.y - c.radius,
-      width: c.radius * 2,
-      height: c.radius * 2
-    };
-
-    if (overlaps(planeBox, coinBox)) {
-      runCoins++;
-      savedCoins++;
-      saveProgress();
-      updateCoinDisplays();
-      playSound();
-      return false;
-    }
-    return true;
-  });
-}
-
-/* -------------------- GAME LOOP -------------------- */
-function drawScene() {
-  drawBackground();
-
-  for (const m of missiles) drawMissile(m);
-  for (const c of coins) drawCoin(c);
-
-  drawPlane();
-}
-
-function updateGame(delta) {
-  if (!gameRunning) return;
-
-  const dt = Math.min(delta / 16.67, 2);
-
-  frame += dt;
-  timeOfDayTimer += dt;
-
-  score = Math.floor(frame / 6);
-  speed = Math.min(3 + frame / 1200, 9);
-
-  if (keys.up) plane.y -= plane.speed * dt;
-  if (keys.down) plane.y += plane.speed * dt;
-
-  plane.y = Math.max(45, Math.min(H - plane.height - 15, plane.y));
-
-  spawnTimer += dt;
-  coinTimer += dt;
-
-  const missileInterval = Math.max(42, 95 - frame / 90);
-  if (spawnTimer > missileInterval) {
-    spawnMissile();
-    spawnTimer = 0;
-  }
-
-  if (coinTimer > 75) {
-    spawnCoin();
-    coinTimer = 0;
-  }
-
-  missiles.forEach(m => { m.x -= speed * dt; });
-  coins.forEach(c => { c.x -= speed * dt; });
-
-  missiles = missiles.filter(m => m.x + m.width > -10);
-  coins = coins.filter(c => c.x + c.radius > -10);
-
-  const planeBox = {
-    x: plane.x + 10,
-    y: plane.y + 7,
-    width: plane.width - 18,
-    height: plane.height - 14
-  };
-
-  for (const m of missiles) {
-    const missileBox = {
-      x: m.x + 5,
-      y: m.y + 4,
-      width: m.width - 10,
-      height: m.height - 8
-    };
-    if (overlaps(planeBox, missileBox)) {
-      endGame();
-      return;
-    }
-  }
-
-  collectCoins();
-  document.getElementById("scoreBox").textContent = score;
-}
-
-function loop(timestamp) {
-  const delta = lastTime ? timestamp - lastTime : 16.67;
-  lastTime = timestamp;
-
-  updateGame(delta);
-  drawScene();
-
-  animationId = requestAnimationFrame(loop);
-}
-
-/* -------------------- GAME CONTROLS -------------------- */
-function startGame() {
-  playSound();
-
-  score = 0;
-  runCoins = 0;
-  frame = 0;
-  speed = 3;
-  spawnTimer = 0;
-  coinTimer = 0;
-  timeOfDayTimer = 0;
-  missiles = [];
-  coins = [];
-
-  plane.x = Math.max(35, W * 0.12);
-  plane.y = H * 0.45;
-
-  gameOver = false;
-  gameStarted = true;
-  gameRunning = true;
-  lastTime = 0;
-
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("gameOver").classList.add("hidden");
-  document.getElementById("topBar").classList.remove("hidden");
-  document.getElementById("mobileControls").classList.remove("hidden");
-
-  updateCoinDisplays();
-}
-
-function endGame() {
-  if (gameOver) return;
-
-  gameOver = true;
-  gameRunning = false;
-  keys.up = false;
-  keys.down = false;
-
-  document.getElementById("finalScore").textContent = score;
-  document.getElementById("runCoins").textContent = runCoins;
-  document.getElementById("gameOverCoins").textContent = savedCoins;
-
-  document.getElementById("gameOver").classList.remove("hidden");
-  document.getElementById("mobileControls").classList.add("hidden");
-  document.getElementById("topBar").classList.add("hidden");
-
-  playSound();
-}
-
-function updateCoinDisplays() {
-  document.getElementById("coinBox").textContent = savedCoins;
-  document.getElementById("shopCoins").textContent = savedCoins;
-  document.getElementById("gameOverCoins").textContent = savedCoins;
-}
-
-/* -------------------- SHOP -------------------- */
-function openShop() {
-  playSound();
-  shopWasRunning = gameRunning;
-  gameRunning = false;
-
-  document.getElementById("shopWindow").classList.remove("hidden");
-  document.getElementById("mobileControls").classList.add("hidden");
-
-  updateCoinDisplays();
-  updateEquipButtons();
-}
-
-function closeShop() {
-  playSound();
-  document.getElementById("shopWindow").classList.add("hidden");
-
-  if (shopWasRunning && !gameOver) {
-    gameRunning = true;
-    document.getElementById("mobileControls").classList.remove("hidden");
-  }
-
-  shopWasRunning = false;
-}
-
-function showShopTab(tab) {
-  playSound();
-
-  const is737 = tab === "737";
-
-  document.getElementById("shop737").classList.toggle("hidden", !is737);
-  document.getElementById("shopSpecial").classList.toggle("hidden", is737);
-
-  document.getElementById("tab737").classList.toggle("active", is737);
-  document.getElementById("tabSpecial").classList.toggle("active", !is737);
-}
-
-function equipSkin(skin) {
-  if (!images[skin]) return;
-
-  selectedSkin = skin;
-  saveProgress();
-  updateEquipButtons();
-  playSound();
-}
-
-function updateEquipButtons() {
-  const defaultButton = document.getElementById("equipDefaultButton");
-  const skin1Button = document.getElementById("equipSkin1Button");
-  const taklaButton = document.getElementById("equipTaklaButton");
-
-  defaultButton.textContent = selectedSkin === "plane" ? "✓ EQUIPPED" : "EQUIP";
-  skin1Button.textContent = selectedSkin === "skin1" ? "✓ EQUIPPED" : "EQUIP";
-  taklaButton.textContent = selectedSkin === "takla" ? "✓ EQUIPPED" : "EQUIP";
-
-  updateCoinDisplays();
-}
-
-/* -------------------- INPUT EVENTS -------------------- */
-document.getElementById("startButton").addEventListener("click", startGame);
-document.getElementById("restartButton").addEventListener("click", startGame);
-
-document.getElementById("menuShopButton").addEventListener("click", openShop);
-document.getElementById("shopButton").addEventListener("click", openShop);
-document.getElementById("gameOverShopButton").addEventListener("click", openShop);
-document.getElementById("closeShopButton").addEventListener("click", closeShop);
-
-document.getElementById("tab737").addEventListener("click", () => showShopTab("737"));
-document.getElementById("tabSpecial").addEventListener("click", () => showShopTab("special"));
-
-document.getElementById("equipDefaultButton").addEventListener("click", () => equipSkin("plane"));
-document.getElementById("equipSkin1Button").addEventListener("click", () => equipSkin("skin1"));
-document.getElementById("equipTaklaButton").addEventListener("click", () => equipSkin("takla"));
-
-window.addEventListener("keydown", event => {
-  if (["ArrowUp", "ArrowDown", " "].includes(event.key)) {
-    event.preventDefault();
-  }
-
-  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
-    keys.up = true;
-  }
-  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
-    keys.down = true;
-  }
-});
-
-window.addEventListener("keyup", event => {
-  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
-    keys.up = false;
-  }
-  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
-    keys.down = false;
-  }
-});
-
-window.addEventListener("blur", () => {
-  keys.up = false;
-  keys.down = false;
-});
-
-function bindHoldButton(id, direction) {
-  const button = document.getElementById(id);
-
-  button.addEventListener("pointerdown", event => {
-    event.preventDefault();
-    keys[direction] = true;
-    try { button.setPointerCapture(event.pointerId); } catch (error) {}
-  });
-
-  const release = event => {
-    event.preventDefault();
-    keys[direction] = false;
-  };
-
-  button.addEventListener("pointerup", release);
-  button.addEventListener("pointercancel", release);
-  button.addEventListener("lostpointercapture", () => {
-    keys[direction] = false;
-  });
-}
-
-bindHoldButton("upButton", "up");
-bindHoldButton("downButton", "down");
 
 window.addEventListener("resize", resizeCanvas);
 
-/* -------------------- INITIALIZE -------------------- */
+
+/*
+ IMPORTANT:
+ plane is declared before resizeCanvas is called.
+*/
 resizeCanvas();
-updateCoinDisplays();
-updateEquipButtons();
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+let moveUp = false;
+let moveDown = false;
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.key === "ArrowUp") {
+        moveUp = true;
+    }
+
+    if (e.key === "ArrowDown") {
+        moveDown = true;
+    }
+
+});
+
+document.addEventListener("keyup", (e) => {
+
+    if (e.key === "ArrowUp") {
+        moveUp = false;
+    }
+
+    if (e.key === "ArrowDown") {
+        moveDown = false;
+    }
+
+});
+
+
+/* =========================================================
+   MOBILE BUTTONS
+========================================================= */
+
+function startUp(e) {
+
+    e.preventDefault();
+    moveUp = true;
+
+}
+
+function stopUp(e) {
+
+    e.preventDefault();
+    moveUp = false;
+
+}
+
+function startDown(e) {
+
+    e.preventDefault();
+    moveDown = true;
+
+}
+
+function stopDown(e) {
+
+    e.preventDefault();
+    moveDown = false;
+
+}
+
+
+const upButton =
+    document.getElementById("upButton");
+
+const downButton =
+    document.getElementById("downButton");
+
+
+upButton.addEventListener("touchstart", startUp);
+upButton.addEventListener("touchend", stopUp);
+upButton.addEventListener("touchcancel", stopUp);
+
+downButton.addEventListener("touchstart", startDown);
+downButton.addEventListener("touchend", stopDown);
+downButton.addEventListener("touchcancel", stopDown);
+
+
+upButton.addEventListener("mousedown", startUp);
+upButton.addEventListener("mouseup", stopUp);
+upButton.addEventListener("mouseleave", stopUp);
+
+downButton.addEventListener("mousedown", startDown);
+downButton.addEventListener("mouseup", stopDown);
+downButton.addEventListener("mouseleave", stopDown);
+
+
+/* =========================================================
+   MISSILES
+========================================================= */
+
+let missiles = [];
+
+let missileTimer = 0;
+
+let missileSpeed = 5;
+
+
+/* =========================================================
+   COINS
+========================================================= */
+
+let coinObjects = [];
+
+let coinTimer = 0;
+
+
+/* =========================================================
+   CLOUDS
+========================================================= */
+
+let clouds = [];
+
+for (let i = 0; i < 12; i++) {
+
+    clouds.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        size: 30 + Math.random() * 50,
+        speed: 0.5 + Math.random()
+    });
+
+}
+
+
+/* =========================================================
+   TIME OF DAY
+========================================================= */
+
+let timeOfDayTimer = 0;
+
+
+/* =========================================================
+   ESCORT
+========================================================= */
+
+let escort = {
+
+    active: false,
+
+    x: -150,
+    y: 0,
+
+    width: 90,
+    height: 55,
+
+    state: "none",
+
+    timer: 0,
+
+    shots: [],
+
+    shootTimer: 0
+
+};
+
+
+/* =========================================================
+   UTILITY
+========================================================= */
+
+function randomY(height) {
+
+    return Math.max(
+        10,
+        Math.random() * (canvas.height - height - 10)
+    );
+
+}
+
+
+/* =========================================================
+   DRAW BACKGROUND
+========================================================= */
+
+function drawBackground() {
+
+    const phase =
+        Math.floor(timeOfDayTimer / 1800) % 3;
+
+
+    let topColor;
+    let bottomColor;
+
+
+    if (phase === 0) {
+
+        topColor = "#55b9ff";
+        bottomColor = "#d8f3ff";
+
+    }
+
+    else if (phase === 1) {
+
+        topColor = "#f39c5a";
+        bottomColor = "#ffd5a3";
+
+    }
+
+    else {
+
+        topColor = "#071b3a";
+        bottomColor = "#173b63";
+
+    }
+
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            canvas.height
+        );
+
+    gradient.addColorStop(0, topColor);
+    gradient.addColorStop(1, bottomColor);
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+}
+
+
+/* =========================================================
+   DRAW CLOUDS
+========================================================= */
+
+function drawClouds() {
+
+    ctx.save();
+
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+
+    for (const cloud of clouds) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            cloud.x,
+            cloud.y,
+            cloud.size * 0.45,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.arc(
+            cloud.x + cloud.size * 0.45,
+            cloud.y - cloud.size * 0.15,
+            cloud.size * 0.55,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.arc(
+            cloud.x + cloud.size,
+            cloud.y,
+            cloud.size * 0.4,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    }
+
+    ctx.restore();
+
+}
+
+
+/* =========================================================
+   UPDATE CLOUDS
+========================================================= */
+
+function updateClouds(dt) {
+
+    for (const cloud of clouds) {
+
+        cloud.x -= cloud.speed * dt;
+
+        if (cloud.x < -cloud.size * 2) {
+
+            cloud.x =
+                canvas.width + cloud.size * 2;
+
+            cloud.y =
+                Math.random() * canvas.height;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAW PLANE
+========================================================= */
+
+function getPlaneImage() {
+
+    if (selectedSkin === "skin1") {
+        return skin1Image;
+    }
+
+    if (selectedSkin === "takla") {
+        return taklaImage;
+    }
+
+    return planeImage;
+
+}
+
+
+function drawPlane() {
+
+    const img = getPlaneImage();
+
+    if (img.complete && img.naturalWidth > 0) {
+
+        ctx.drawImage(
+            img,
+            plane.x,
+            plane.y,
+            plane.width,
+            plane.height
+        );
+
+    } else {
+
+        ctx.fillStyle = "white";
+
+        ctx.fillRect(
+            plane.x,
+            plane.y,
+            plane.width,
+            plane.height
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE PLANE
+========================================================= */
+
+function updatePlane(dt) {
+
+    if (moveUp) {
+
+        plane.y -= plane.speed * dt;
+
+    }
+
+    if (moveDown) {
+
+        plane.y += plane.speed * dt;
+
+    }
+
+
+    if (plane.y < 0) {
+        plane.y = 0;
+    }
+
+
+    if (plane.y + plane.height > canvas.height) {
+
+        plane.y =
+            canvas.height - plane.height;
+
+    }
+
+}
+
+
+/* =========================================================
+   MISSILE CREATION
+========================================================= */
+
+function createMissile() {
+
+    missiles.push({
+
+        x: canvas.width + 60,
+
+        y: randomY(35),
+
+        width: 55,
+
+        height: 25,
+
+        speed:
+            missileSpeed +
+            Math.random() * 2
+
+    });
+
+}
+
+
+/* =========================================================
+   UPDATE MISSILES
+========================================================= */
+
+function updateMissiles(dt) {
+
+    missileTimer += dt;
+
+    if (missileTimer > 70) {
+
+        missileTimer = 0;
+
+        createMissile();
+
+    }
+
+
+    for (const missile of missiles) {
+
+        missile.x -=
+            missile.speed * dt;
+
+    }
+
+
+    missiles =
+        missiles.filter(
+            missile =>
+                missile.x > -100
+        );
+
+}
+
+
+/* =========================================================
+   DRAW MISSILES
+========================================================= */
+
+function drawMissiles() {
+
+    for (const missile of missiles) {
+
+        if (
+            missileImage.complete &&
+            missileImage.naturalWidth > 0
+        ) {
+
+            ctx.drawImage(
+                missileImage,
+                missile.x,
+                missile.y,
+                missile.width,
+                missile.height
+            );
+
+        }
+
+        else {
+
+            ctx.fillStyle = "red";
+
+            ctx.fillRect(
+                missile.x,
+                missile.y,
+                missile.width,
+                missile.height
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   COINS
+========================================================= */
+
+function createCoin() {
+
+    coinObjects.push({
+
+        x: canvas.width + 30,
+
+        y:
+            40 +
+            Math.random() *
+            Math.max(
+                50,
+                canvas.height - 80
+            ),
+
+        radius: 12,
+
+        speed: 3.5
+
+    });
+
+}
+
+
+function updateCoins(dt) {
+
+    coinTimer += dt;
+
+    if (coinTimer > 110) {
+
+        coinTimer = 0;
+
+        createCoin();
+
+    }
+
+
+    for (const coin of coinObjects) {
+
+        coin.x -=
+            (coin.speed + missileSpeed * 0.15) * dt;
+
+    }
+
+
+    for (let i = coinObjects.length - 1; i >= 0; i--) {
+
+        const coin = coinObjects[i];
+
+        if (
+            plane.x <
+                coin.x + coin.radius &&
+            plane.x + plane.width >
+                coin.x - coin.radius &&
+            plane.y <
+                coin.y + coin.radius &&
+            plane.y + plane.height >
+                coin.y - coin.radius
+        ) {
+
+            savedCoins++;
+
+            localStorage.setItem(
+                "skyEscapeCoins",
+                savedCoins
+            );
+
+            coinObjects.splice(i, 1);
+
+            playSound();
+
+        }
+
+    }
+
+
+    coinObjects =
+        coinObjects.filter(
+            coin => coin.x > -50
+        );
+
+}
+
+
+function drawCoins() {
+
+    for (const coin of coinObjects) {
+
+        ctx.save();
+
+        ctx.fillStyle = "#ffd700";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            coin.x,
+            coin.y,
+            coin.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        ctx.fillStyle = "#8a6500";
+
+        ctx.font = "bold 13px Arial";
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+            "$",
+            coin.x,
+            coin.y
+        );
+
+        ctx.restore();
+
+    }
+
+}
+
+
+/* =========================================================
+   COLLISION
+========================================================= */
+
+function collision(a, b) {
+
+    return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    );
+
+}
+
+
+/* =========================================================
+   ESCORT ACTIVATION
+========================================================= */
+
+function activateEscort() {
+
+    if (!escortPurchased) {
+        return;
+    }
+
+    if (!gameRunning || gameOver) {
+        return;
+    }
+
+    if (escort.active) {
+        return;
+    }
+
+
+    escort.active = true;
+
+    escort.timer = 0;
+
+    escort.state = "enter";
+
+    escort.x = plane.x - 180;
+
+    escort.y = plane.y - 80;
+
+    escort.shots = [];
+
+    escort.shootTimer = 0;
+
+
+    const button =
+        document.getElementById("escortButton");
+
+    button.className = "active-escort";
+
+    button.textContent = "ESCORT ACTIVE";
+
+    playSound();
+
+}
+
+
+/* =========================================================
+   UPDATE ESCORT
+========================================================= */
+
+function updateEscort(dt) {
+
+    if (!escort.active) {
+        return;
+    }
+
+
+    escort.timer += dt;
+
+
+    /*
+       Enter for first 3 seconds
+    */
+
+    if (escort.state === "enter") {
+
+        escort.x += 5 * dt;
+
+        escort.y +=
+            (plane.y - escort.y) * 0.08 * dt;
+
+        if (escort.timer >= 180) {
+
+            escort.state = "guard";
+
+        }
+
+    }
+
+
+    /*
+       Guard from 3 to 55 seconds
+    */
+
+    else if (escort.state === "guard") {
+
+        escort.x +=
+            (plane.x + 150 - escort.x) *
+            0.08 *
+            dt;
+
+        escort.y +=
+            (plane.y - 90 - escort.y) *
+            0.08 *
+            dt;
+
+
+        escort.shootTimer += dt;
+
+        if (escort.shootTimer > 70) {
+
+            escort.shootTimer = 0;
+
+            escort.shots.push({
+
+                x: escort.x + escort.width,
+
+                y: escort.y + escort.height / 2,
+
+                width: 40,
+
+                height: 18,
+
+                speed: 10,
+
+                hit: false
+
+            });
+
+        }
+
+
+        if (escort.timer >= 3300) {
+
+            escort.state = "retreat";
+
+        }
+
+    }
+
+
+    /*
+       Retreat from 55 to 60 seconds
+    */
+
+    else if (escort.state === "retreat") {
+
+        escort.x += 6 * dt;
+
+        escort.y -= 1.5 * dt;
+
+    }
+
+
+    /*
+       Remove after 60 seconds
+    */
+
+    if (escort.timer >= 3600) {
+
+        finishEscort();
+
+        return;
+
+    }
+
+
+    /*
+       Move escort missiles
+    */
+
+    for (const shot of escort.shots) {
+
+        shot.x += shot.speed * dt;
+
+    }
+
+
+    /*
+       Defensive missile interception
+    */
+
+    for (const shot of escort.shots) {
+
+        for (const missile of missiles) {
+
+            if (
+                !shot.hit &&
+                collision(shot, missile)
+            ) {
+
+                shot.hit = true;
+
+                missile.x = -200;
+
+            }
+
+        }
+
+    }
+
+
+    escort.shots =
+        escort.shots.filter(
+            shot =>
+                shot.x < canvas.width + 100 &&
+                !shot.hit
+        );
+
+}
+
+
+/* =========================================================
+   DRAW ESCORT
+========================================================= */
+
+function drawEscort() {
+
+    if (!escort.active) {
+        return;
+    }
+
+
+    if (
+        escortImage.complete &&
+        escortImage.naturalWidth > 0
+    ) {
+
+        ctx.drawImage(
+            escortImage,
+            escort.x,
+            escort.y,
+            escort.width,
+            escort.height
+        );
+
+    }
+
+    else {
+
+        ctx.fillStyle = "#555";
+
+        ctx.fillRect(
+            escort.x,
+            escort.y,
+            escort.width,
+            escort.height
+        );
+
+    }
+
+
+    /*
+       Draw escort missiles
+    */
+
+    for (const shot of escort.shots) {
+
+        if (
+            missileImage.complete &&
+            missileImage.naturalWidth > 0
+        ) {
+
+            ctx.drawImage(
+                missileImage,
+                shot.x,
+                shot.y,
+                shot.width,
+                shot.height
+            );
+
+        }
+
+        else {
+
+            ctx.fillStyle = "yellow";
+
+            ctx.fillRect(
+                shot.x,
+                shot.y,
+                shot.width,
+                shot.height
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH ESCORT
+========================================================= */
+
+function finishEscort() {
+
+    escort.active = false;
+
+    escort.state = "none";
+
+    escort.timer = 0;
+
+    escort.shots = [];
+
+
+    updateEscortButton();
+
+}
+
+
+/* =========================================================
+   ESCORT BUTTON
+========================================================= */
+
+function updateEscortButton() {
+
+    const button =
+        document.getElementById("escortButton");
+
+
+    if (
+        !escortPurchased ||
+        !gameRunning ||
+        gameOver
+    ) {
+
+        button.classList.add("hidden");
+
+        return;
+
+    }
+
+
+    button.classList.remove("hidden");
+
+
+    if (escort.active) {
+
+        button.className = "active-escort";
+
+        button.textContent = "ESCORT ACTIVE";
+
+    }
+
+    else {
+
+        button.className = "";
+
+        button.textContent = "CALL ESCORT";
+
+    }
+
+}
+
+
+/* =========================================================
+   GAME UPDATE
+========================================================= */
+
+function updateGame(dt) {
+
+    timeOfDayTimer += dt;
+
+    score += dt * 0.05;
+
+    missileSpeed += dt * 0.0003;
+
+
+    updatePlane(dt);
+
+    updateMissiles(dt);
+
+    updateCoins(dt);
+
+    updateClouds(dt);
+
+    updateEscort(dt);
+
+
+    /*
+       Player collision
+    */
+
+    for (const missile of missiles) {
+
+        if (collision(plane, missile)) {
+
+            endGame();
+
+            return;
+
+        }
+
+    }
+
+
+    /*
+       Remove old missiles
+    */
+
+    missiles =
+        missiles.filter(
+            missile =>
+                missile.x > -150
+        );
+
+}
+
+
+/* =========================================================
+   DRAW GAME
+========================================================= */
+
+function drawGame() {
+
+    drawBackground();
+
+    drawClouds();
+
+    drawCoins();
+
+    drawMissiles();
+
+    drawEscort();
+
+    drawPlane();
+
+
+    document.getElementById("score").textContent =
+        "Score: " + Math.floor(score);
+
+
+    document.getElementById("coins").textContent =
+        "🪙 Coins: " + savedCoins;
+
+}
+
+
+/* =========================================================
+   GAME OVER
+========================================================= */
+
+function endGame() {
+
+    if (gameOver) {
+        return;
+    }
+
+
+    gameOver = true;
+
+    gameRunning = false;
+
+    moveUp = false;
+    moveDown = false;
+
+
+    if (escort.active) {
+        finishEscort();
+    }
+
+
+    document.getElementById("finalScore").textContent =
+        "Score: " + Math.floor(score);
+
+
+    document.getElementById("finalCoins").textContent =
+        "Coins: " + savedCoins;
+
+
+    document
+        .getElementById("gameOverScreen")
+        .classList.remove("hidden");
+
+
+    updateEscortButton();
+
+
+    /*
+       Game-over sound
+    */
+
+    playSound();
+
+}
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+function startGame() {
+
+    playSound();
+
+
+    score = 0;
+
+    missileTimer = 0;
+
+    coinTimer = 0;
+
+    missileSpeed = 5;
+
+    timeOfDayTimer = 0;
+
+
+    missiles = [];
+
+    coinObjects = [];
+
+
+    plane.x = 120;
+
+    plane.y =
+        canvas.height / 2 -
+        plane.height / 2;
+
+
+    gameOver = false;
+
+    gameRunning = true;
+
+
+    escort.active = false;
+
+    escort.timer = 0;
+
+    escort.state = "none";
+
+    escort.shots = [];
+
+
+    document
+        .getElementById("startScreen")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("gameOverScreen")
+        .classList.add("hidden");
+
+
+    updateEscortButton();
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+document
+    .getElementById("restartButton")
+    .addEventListener("click", () => {
+
+        playSound();
+
+        startGame();
+
+    });
+
+
+/* =========================================================
+   START BUTTON
+========================================================= */
+
+document
+    .getElementById("startButton")
+    .addEventListener("click", () => {
+
+        startGame();
+
+    });
+
+
+/* =========================================================
+   ESCORT BUTTON
+========================================================= */
+
+document
+    .getElementById("escortButton")
+    .addEventListener("click", () => {
+
+        activateEscort();
+
+    });
+
+
+/* =========================================================
+   SHOP
+========================================================= */
+
+let shopWasRunning = false;
+
+
+function openShop() {
+
+    shopWasRunning = gameRunning;
+
+    gameRunning = false;
+
+    moveUp = false;
+    moveDown = false;
+
+
+    document
+        .getElementById("shopScreen")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("mobileControls")
+        .style.display = "none";
+
+
+    updateShopCoins();
+
+    updateShopButtons();
+
+    showShopTab("737");
+
+    updateEscortButton();
+
+}
+
+
+function closeShop() {
+
+    document
+        .getElementById("shopScreen")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("mobileControls")
+        .style.display = "flex";
+
+
+    if (shopWasRunning && !gameOver) {
+
+        gameRunning = true;
+
+    }
+
+
+    updateEscortButton();
+
+}
+
+
+function updateShopCoins() {
+
+    document.getElementById("shopCoins").textContent =
+        savedCoins;
+
+}
+
+
+/* =========================================================
+   SHOP TABS
+========================================================= */
+
+function showShopTab(tab) {
+
+    document
+        .getElementById("content737")
+        .classList.remove("active");
+
+    document
+        .getElementById("contentSpecial")
+        .classList.remove("active");
+
+    document
+        .getElementById("contentAbilities")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("tab737")
+        .classList.remove("selected");
+
+    document
+        .getElementById("tabSpecial")
+        .classList.remove("selected");
+
+    document
+        .getElementById("tabAbilities")
+        .classList.remove("selected");
+
+
+    if (tab === "737") {
+
+        document
+            .getElementById("content737")
+            .classList.add("active");
+
+        document
+            .getElementById("tab737")
+            .classList.add("selected");
+
+    }
+
+
+    if (tab === "Special") {
+
+        document
+            .getElementById("contentSpecial")
+            .classList.add("active");
+
+        document
+            .getElementById("tabSpecial")
+            .classList.add("selected");
+
+    }
+
+
+    if (tab === "Abilities") {
+
+        document
+            .getElementById("contentAbilities")
+            .classList.add("active");
+
+        document
+            .getElementById("tabAbilities")
+            .classList.add("selected");
+
+    }
+
+}
+
+
+document
+    .getElementById("tab737")
+    .addEventListener("click", () => {
+
+        playSound();
+        showShopTab("737");
+
+    });
+
+
+document
+    .getElementById("tabSpecial")
+    .addEventListener("click", () => {
+
+        playSound();
+        showShopTab("Special");
+
+    });
+
+
+document
+    .getElementById("tabAbilities")
+    .addEventListener("click", () => {
+
+        playSound();
+        showShopTab("Abilities");
+
+    });
+
+
+/* =========================================================
+   SHOP OPEN BUTTONS
+========================================================= */
+
+document
+    .getElementById("shopButton")
+    .addEventListener("click", () => {
+
+        playSound();
+        openShop();
+
+    });
+
+
+document
+    .getElementById("startShopButton")
+    .addEventListener("click", () => {
+
+        playSound();
+        openShop();
+
+    });
+
+
+document
+    .getElementById("gameOverShopButton")
+    .addEventListener("click", () => {
+
+        playSound();
+        openShop();
+
+    });
+
+
+document
+    .getElementById("closeShopButton")
+    .addEventListener("click", () => {
+
+        playSound();
+        closeShop();
+
+    });
+
+
+/* =========================================================
+   SHOP BUTTON STATE
+========================================================= */
+
+function updateShopButtons() {
+
+    const defaultButton =
+        document.getElementById("equipDefaultButton");
+
+    const skinButton =
+        document.getElementById("skin1Button");
+
+    const taklaButton =
+        document.getElementById("taklaButton");
+
+    const escortButton =
+        document.getElementById("escortBuyButton");
+
+
+    /*
+       DEFAULT
+    */
+
+    if (selectedSkin === "default") {
+
+        defaultButton.textContent = "EQUIPPED";
+
+        defaultButton.className = "equipped";
+
+    }
+
+    else {
+
+        defaultButton.textContent = "EQUIP";
+
+        defaultButton.className = "";
+
+    }
+
+
+    /*
+       SKIN 1
+    */
+
+    const skin1Purchased =
+        localStorage.getItem("skin1Purchased") === "true";
+
+
+    if (!skin1Purchased) {
+
+        skinButton.textContent =
+            "BUY - 50 COINS";
+
+        skinButton.className = "";
+
+    }
+
+    else if (selectedSkin === "skin1") {
+
+        skinButton.textContent =
+            "EQUIPPED";
+
+        skinButton.className =
+            "equipped";
+
+    }
+
+    else {
+
+        skinButton.textContent =
+            "EQUIP";
+
+        skinButton.className = "";
+
+    }
+
+
+    /*
+       TAKLA
+    */
+
+    const taklaPurchased =
+        localStorage.getItem("taklaPurchased") === "true";
+
+
+    if (!taklaPurchased) {
+
+        taklaButton.textContent =
+            "BUY - 150 COINS";
+
+        taklaButton.className = "";
+
+    }
+
+    else if (selectedSkin === "takla") {
+
+        taklaButton.textContent =
+            "EQUIPPED";
+
+        taklaButton.className =
+            "equipped";
+
+    }
+
+    else {
+
+        taklaButton.textContent =
+            "EQUIP";
+
+        taklaButton.className = "";
+
+    }
+
+
+    /*
+       ESCORT
+    */
+
+    if (escortPurchased) {
+
+        escortButton.textContent =
+            "PURCHASED";
+
+        escortButton.className =
+            "equipped";
+
+    }
+
+    else {
+
+        escortButton.textContent =
+            "BUY - 100 COINS";
+
+        escortButton.className = "";
+
+    }
+
+}
+
+
+/* =========================================================
+   DEFAULT AIRCRAFT
+========================================================= */
+
+document
+    .getElementById("equipDefaultButton")
+    .addEventListener("click", () => {
+
+        selectedSkin = "default";
+
+        localStorage.setItem(
+            "selected737Skin",
+            "default"
+        );
+
+        playSound();
+
+        updateShopButtons();
+
+    });
+
+
+/* =========================================================
+   SKIN 1
+========================================================= */
+
+document
+    .getElementById("skin1Button")
+    .addEventListener("click", () => {
+
+        const purchased =
+            localStorage.getItem("skin1Purchased") === "true";
+
+
+        if (!purchased) {
+
+            if (savedCoins < 50) {
+
+                alert("You need 50 coins.");
+
+                return;
+
+            }
+
+
+            savedCoins -= 50;
+
+            localStorage.setItem(
+                "skyEscapeCoins",
+                savedCoins
+            );
+
+            localStorage.setItem(
+                "skin1Purchased",
+                "true"
+            );
+
+        }
+
+
+        selectedSkin = "skin1";
+
+        localStorage.setItem(
+            "selected737Skin",
+            "skin1"
+        );
+
+
+        playSound();
+
+        updateShopCoins();
+
+        updateShopButtons();
+
+    });
+
+
+/* =========================================================
+   TAKLA
+========================================================= */
+
+document
+    .getElementById("taklaButton")
+    .addEventListener("click", () => {
+
+        const purchased =
+            localStorage.getItem("taklaPurchased") === "true";
+
+
+        if (!purchased) {
+
+            if (savedCoins < 150) {
+
+                alert("You need 150 coins.");
+
+                return;
+
+            }
+
+
+            savedCoins -= 150;
+
+            localStorage.setItem(
+                "skyEscapeCoins",
+                savedCoins
+            );
+
+            localStorage.setItem(
+                "taklaPurchased",
+                "true"
+            );
+
+        }
+
+
+        selectedSkin = "takla";
+
+        localStorage.setItem(
+            "selected737Skin",
+            "takla"
+        );
+
+
+        playSound();
+
+        updateShopCoins();
+
+        updateShopButtons();
+
+    });
+
+
+/* =========================================================
+   ESCORT PURCHASE
+========================================================= */
+
+document
+    .getElementById("escortBuyButton")
+    .addEventListener("click", () => {
+
+        if (escortPurchased) {
+            return;
+        }
+
+
+        if (savedCoins < 100) {
+
+            alert("You need 100 coins.");
+
+            return;
+
+        }
+
+
+        savedCoins -= 100;
+
+        escortPurchased = true;
+
+
+        localStorage.setItem(
+            "skyEscapeCoins",
+            savedCoins
+        );
+
+        localStorage.setItem(
+            "escortAbilityPurchased",
+            "true"
+        );
+
+
+        playSound();
+
+        updateShopCoins();
+
+        updateShopButtons();
+
+    });
+
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+
+let lastTime = performance.now();
+
+
+function loop(currentTime) {
+
+    const delta =
+        Math.min(
+            2,
+            (currentTime - lastTime) / 16.67
+        );
+
+
+    lastTime = currentTime;
+
+
+    if (gameRunning && !gameOver) {
+
+        updateGame(delta);
+
+    }
+
+
+    drawGame();
+
+
+    requestAnimationFrame(loop);
+
+}
+
+
+requestAnimationFrame(loop);
+
+
+/* =========================================================
+   INITIAL UI
+========================================================= */
+
+updateShopCoins();
+
+updateShopButtons();
+
 showShopTab("737");
 
-/* Start the drawing loop only once. */
-cancelAnimationFrame(animationId);
-animationId = requestAnimationFrame(loop);
+updateEscortButton();
+
+
+/* =========================================================
+   PREVENT PAGE SCROLL ON MOBILE
+========================================================= */
+
+document.addEventListener(
+    "touchmove",
+    function(e) {
+        e.preventDefault();
+    },
+    { passive: false }
+);
+
 </script>
+
 </body>
 </html>
