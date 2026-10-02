@@ -2,2628 +2,989 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D FLIGHT SIM</title>
 
-<meta name="viewport"
-      content="width=device-width,
-      initial-scale=1.0,
-      maximum-scale=1.0,
-      user-scalable=no">
-
-<title>737 Sky Escape</title>
+<!-- Pixel-style font; Recons is preferred if installed or loaded locally. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+:root {
+  --yellow: #ffe34d;
+  --blue: #1689e8;
+  --dark: #101b2d;
 }
 
 body {
-    background: #87ceeb;
+  margin: 0;
+  overflow: hidden;
+  background: #071426;
+  color: white;
+  font-family: Arial, sans-serif;
+  user-select: none;
 }
 
 #gameCanvas {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    display: block;
-    touch-action: none;
-    z-index: 1;
+  display: block;
+  width: 100vw;
+  height: 100dvh;
+  background: #75c9ff;
 }
 
-/* TOP UI */
+.pixel-font {
+  font-family: "Recons", "Press Start 2P", monospace;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
 
 #topBar {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    z-index: 10;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    pointer-events: none;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  z-index: 3;
 }
 
-#scoreBox,
-#coinBox {
-    padding: 8px 12px;
-    border-radius: 12px;
-
-    background: rgba(0,0,0,0.55);
-    color: white;
-
-    font-size: 16px;
-    font-weight: bold;
+.hud {
+  background: #101b2ddd;
+  border: 2px solid #ffffff66;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 3px 0 #0004;
 }
 
-#rightUI {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    pointer-events: auto;
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: white;
+  background: var(--blue);
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #07549a;
+  touch-action: manipulation;
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #07549a;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
 }
 
 #shopButton {
-    border: none;
-    padding: 8px 12px;
-
-    border-radius: 12px;
-
-    background: rgba(0,0,0,0.65);
-    color: white;
-
-    font-size: 20px;
-    cursor: pointer;
-
-    touch-action: manipulation;
+  background: #f1b82d;
+  color: #302300;
+  box-shadow: 0 4px 0 #a46b00;
 }
 
-/* MENU */
-
-#menu,
-#gameOver {
-    position: fixed;
-    inset: 0;
-
-    z-index: 20;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 20px;
-
-    background: rgba(0,0,0,0.30);
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: #06101bc2;
+  backdrop-filter: blur(4px);
 }
 
-.menuBox {
-    width: min(92vw, 430px);
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    padding: 26px;
-
-    border-radius: 22px;
-
-    background: rgba(255,255,255,0.97);
-
-    box-shadow:
-        0 12px 40px rgba(0,0,0,0.35);
-
-    text-align: center;
-
-    touch-action: pan-y;
+.panel {
+  width: min(520px, 100%);
+  max-height: 90dvh;
+  overflow-y: auto;
+  text-align: center;
+  background: linear-gradient(160deg, #203d61, #101b2d);
+  border: 3px solid #ffffff66;
+  border-radius: 20px;
+  padding: 24px 18px;
+  box-shadow: 0 12px 40px #0008;
 }
 
-.menuBox h1 {
-    font-size: 30px;
-    margin-bottom: 12px;
+.game-title {
+  font-family: "Recons", "Press Start 2P", monospace;
+  font-size: clamp(23px, 5vw, 40px);
+  line-height: 1.5;
+  color: white;
+  text-shadow: 3px 4px 0 #173b61, 0 0 18px #55baff77;
+  margin: 10px 0 18px;
 }
 
-.menuBox p {
-    margin: 8px 0;
-    color: #333;
+.update-text {
+  display: inline-block;
+  color: #ffe600;
+  font-weight: 1000;
+  font-size: clamp(15px, 3vw, 22px);
+  text-shadow: 2px 3px 0 #7d4500, 0 0 12px #ffed65;
+  transform-origin: center;
+  animation: bounceUpdate .8s ease-in-out infinite alternate;
 }
 
-.savedCoins {
-    margin: 16px 0;
-
-    font-size: 19px;
-    font-weight: bold;
+@keyframes bounceUpdate {
+  from { transform: translateY(0) rotate(-2deg); }
+  to   { transform: translateY(-10px) rotate(2deg); }
 }
 
-.menuButton {
-    width: 100%;
-
-    margin-top: 11px;
-
-    padding: 14px;
-
-    border: none;
-    border-radius: 12px;
-
-    background: #1976d2;
-
-    color: white;
-
-    font-size: 18px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    touch-action: manipulation;
+.subtitle {
+  color: #c8e7ff;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
-.menuButton.shop {
-    background: #333;
+.menu-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
 }
 
-.menuButton.equipped {
-    background: #2e7d32;
+#version {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  z-index: 2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 2px 3px #000;
+  pointer-events: none;
 }
-
-/* SHOP */
 
 #shopWindow {
-    position: fixed;
-    inset: 0;
-
-    z-index: 50;
-
-    display: none;
-
-    padding: 18px;
-
-    background: rgba(0,0,0,0.72);
-
-    overflow-y: auto;
-
-    -webkit-overflow-scrolling: touch;
-
-    touch-action: pan-y;
+  z-index: 10;
 }
 
-.shopBox {
-    width: min(94vw, 520px);
-    max-height: 88vh;
-
-    margin: auto;
-
-    padding: 20px;
-
-    border-radius: 22px;
-
-    background: #f3f3f3;
-
-    box-shadow:
-        0 12px 50px rgba(0,0,0,0.55);
-
-    overflow-y: auto;
-
-    -webkit-overflow-scrolling: touch;
-
-    touch-action: pan-y;
+.shop-heading {
+  font-size: 25px;
+  margin: 2px 0 8px;
 }
 
-.shopHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 14px;
+.shop-balance {
+  color: var(--yellow);
+  font-weight: bold;
+  margin-bottom: 18px;
 }
 
-.shopHeader h2 {
-    font-size: 27px;
+.shop-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 18px;
 }
 
-.closeShop {
-    width: 40px;
-    height: 40px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: #d32f2f;
-
-    color: white;
-
-    font-size: 24px;
-
-    cursor: pointer;
-
-    touch-action: manipulation;
+.shop-tabs button {
+  flex: 1;
+  padding: 13px 6px;
+  background: #314963;
+  box-shadow: 0 4px 0 #182b3e;
 }
 
-.shopCoins {
-    padding: 10px;
-
-    margin-bottom: 17px;
-
-    border-radius: 10px;
-
-    background: #222;
-
-    color: #ffd700;
-
-    text-align: center;
-
-    font-weight: bold;
+.shop-tabs button.active {
+  color: #222;
+  background: var(--yellow);
+  box-shadow: 0 4px 0 #a98900;
 }
 
-.sectionTitle {
-    margin: 15px 0 10px;
-
-    font-size: 22px;
-    font-weight: bold;
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-/* SHOP CARD */
-
-.skinCard {
-    margin-bottom: 16px;
-
-    padding: 14px;
-
-    border: 2px solid #ccc;
-
-    border-radius: 15px;
-
-    background: white;
-
-    text-align: center;
+.skin-card {
+  min-width: 0;
+  padding: 12px 8px;
+  background: #ffffff12;
+  border: 2px solid #ffffff28;
+  border-radius: 14px;
 }
 
-.skinCard h3 {
-    margin-bottom: 10px;
-
-    font-size: 21px;
+.skin-card img {
+  width: 100%;
+  height: 85px;
+  object-fit: contain;
+  image-rendering: auto;
 }
 
-.skinPreview {
-    width: 100%;
-    height: 145px;
-
-    margin-bottom: 11px;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    overflow: hidden;
-
-    border-radius: 12px;
-
-    background:
-        linear-gradient(
-            #78c8ff,
-            #e0f6ff
-        );
+.skin-card h3 {
+  font-size: 15px;
+  margin: 8px 0;
 }
 
-.skinPreview img {
-    max-width: 92%;
-    max-height: 120px;
-
-    object-fit: contain;
+.skin-card p {
+  color: #c6d8e9;
+  font-size: 12px;
+  min-height: 15px;
 }
 
-.skinFallback {
-    color: #555;
-    font-weight: bold;
+.skin-card button {
+  width: 100%;
+  padding: 10px 5px;
+  font-size: 12px;
 }
 
-.equippedText {
-    display: none;
-
-    margin-top: 8px;
-
-    color: #2e7d32;
-
-    font-weight: bold;
+.special-card {
+  grid-column: 1 / -1;
 }
 
-/* MOBILE */
+.special-card img {
+  height: 115px;
+}
+
+.coming-soon {
+  filter: grayscale(1);
+  opacity: .48;
+  background: #5e6670;
+  border: 2px dashed #b6bec7;
+}
+
+.coming-soon button {
+  background: #777;
+  color: #ddd;
+  box-shadow: none;
+}
 
 #mobileControls {
-    position: fixed;
-
-    left: 0;
-    right: 0;
-    bottom: 18px;
-
-    z-index: 10;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    padding: 0 18px;
-
-    pointer-events: none;
+  position: absolute;
+  z-index: 3;
+  bottom: 32px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.controlButton {
-    width: 66px;
-    height: 66px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: rgba(0,0,0,0.45);
-
-    color: white;
-
-    font-size: 28px;
-
-    pointer-events: auto;
-
-    touch-action: none;
-
-    user-select: none;
+.control-button {
+  width: 62px;
+  height: 56px;
+  padding: 0;
+  font-size: 25px;
+  border-radius: 14px;
+  background: #101b2dcc;
+  border: 2px solid #ffffff66;
+  box-shadow: 0 4px 0 #0007;
 }
 
-.controlButton:active {
-    transform: scale(0.94);
+.hidden {
+  display: none !important;
 }
 
-@media (max-width:500px) {
-
-    #scoreBox,
-    #coinBox {
-        font-size: 14px;
-        padding: 7px 9px;
-    }
-
-    #shopButton {
-        font-size: 18px;
-        padding: 7px 10px;
-    }
-
-    .menuBox {
-        padding: 22px;
-    }
-
-    .menuBox h1 {
-        font-size: 27px;
-    }
+@media (max-width: 450px) {
+  .panel { padding: 20px 12px; }
+  .hud { padding: 8px; font-size: 12px; }
+  .shop-heading { font-size: 21px; }
+  .skin-card img { height: 68px; }
+  .special-card img { height: 95px; }
+  button { font-size: 14px; }
 }
 </style>
 </head>
 
 <body>
-
 <canvas id="gameCanvas"></canvas>
 
-<!-- TOP BAR -->
-
-<div id="topBar">
-
-    <div id="scoreBox">
-        Score: 0
-    </div>
-
-    <div id="rightUI">
-
-        <div id="coinBox">
-            🪙 0
-        </div>
-
-        <button id="shopButton">
-            🛒
-        </button>
-
-    </div>
-
+<div id="topBar" class="hidden">
+  <div class="hud">✈️ Score: <span id="scoreBox">0</span></div>
+  <div class="hud">🪙 Coins: <span id="coinBox">0</span></div>
+  <button id="shopButton">🛒 SHOP</button>
 </div>
 
-
-<!-- MAIN MENU -->
-
-<div id="menu">
-
-    <div class="menuBox">
-
-        <h1>
-            ✈️ 737 Sky Escape
-        </h1>
-
-        <p>
-            Avoid missiles and collect coins!
-        </p>
-
-        <div class="savedCoins">
-
-            🪙 Saved Coins:
-
-            <span id="menuCoins">
-                0
-            </span>
-
-        </div>
-
-        <button
-            id="startButton"
-            class="menuButton">
-
-            ▶ PLAY
-
-        </button>
-
-        <button
-            id="menuShopButton"
-            class="menuButton shop">
-
-            🛒 SHOP
-
-        </button>
-
+<div id="menu" class="overlay">
+  <div class="panel">
+    <div style="text-align:left;margin-bottom:12px">
+      <span class="update-text">টাকলা UPDATE!!</span>
     </div>
 
-</div>
-
-
-<!-- GAME OVER -->
-
-<div
-    id="gameOver"
-    style="display:none;">
-
-    <div class="menuBox">
-
-        <h1>
-            GAME OVER
-        </h1>
-
-        <p>
-
-            Score:
-
-            <strong id="finalScore">
-                0
-            </strong>
-
-        </p>
-
-        <p>
-
-            Coins this run:
-
-            <strong id="runCoins">
-                0
-            </strong>
-
-        </p>
-
-        <div class="savedCoins">
-
-            🪙 Total Saved Coins:
-
-            <span id="gameOverCoins">
-                0
-            </span>
-
-        </div>
-
-        <button
-            id="restartButton"
-            class="menuButton">
-
-            ▶ PLAY AGAIN
-
-        </button>
-
-        <button
-            id="gameOverShopButton"
-            class="menuButton shop">
-
-            🛒 SHOP
-
-        </button>
-
+    <h1 class="game-title">2D FLIGHT SIM</h1>
+    <div class="subtitle">
+      Take off, dodge missiles and collect coins!<br>
+      Use ↑ ↓ or the on-screen controls.
     </div>
 
+    <div class="menu-buttons">
+      <button id="startButton">✈️ START FLIGHT</button>
+      <button id="menuShopButton">🛒 AIRCRAFT SHOP</button>
+    </div>
+  </div>
 </div>
 
+<div id="gameOver" class="overlay hidden">
+  <div class="panel">
+    <h1 class="game-title" style="font-size:28px">FLIGHT OVER!</h1>
+    <p>Your score: <strong id="finalScore">0</strong></p>
+    <p>Coins collected: <strong id="runCoins">0</strong></p>
+    <p>Total coins: <strong id="gameOverCoins">0</strong></p>
+    <div class="menu-buttons">
+      <button id="restartButton">🔄 FLY AGAIN</button>
+      <button id="gameOverShopButton">🛒 SHOP</button>
+    </div>
+  </div>
+</div>
 
-<!-- SHOP -->
+<div id="shopWindow" class="overlay hidden">
+  <div class="panel">
+    <h2 class="shop-heading pixel-font">AIRCRAFT SHOP</h2>
+    <div class="shop-balance">🪙 Your coins: <span id="shopCoins">0</span></div>
 
-<div id="shopWindow">
-
-    <div class="shopBox">
-
-        <div class="shopHeader">
-
-            <h2>
-                🛒 SHOP
-            </h2>
-
-            <button
-                id="closeShopButton"
-                class="closeShop">
-
-                ×
-
-            </button>
-
-        </div>
-
-        <div class="shopCoins">
-
-            🪙 Saved Coins:
-
-            <span id="shopCoins">
-                0
-            </span>
-
-        </div>
-
-        <div class="sectionTitle">
-            ✈️ Planes
-        </div>
-
-        <div class="sectionTitle">
-            737 Skins
-        </div>
-
-
-        <!-- DEFAULT PLANE -->
-
-        <div class="skinCard">
-
-            <h3>
-                Default 737
-            </h3>
-
-            <div class="skinPreview">
-
-                <img
-                    src="plane.png"
-                    alt="Default 737"
-                    onerror="
-                    this.style.display='none';
-                    document.getElementById('defaultFallback').style.display='block';
-                    "
-                >
-
-                <span
-                    id="defaultFallback"
-                    class="skinFallback"
-                    style="display:none;">
-
-                    plane.png not found
-
-                </span>
-
-            </div>
-
-            <button
-                id="equipDefaultButton"
-                class="menuButton">
-
-                EQUIP DEFAULT
-
-            </button>
-
-            <div
-                id="defaultEquippedText"
-                class="equippedText">
-
-                ✓ EQUIPPED
-
-            </div>
-
-        </div>
-
-
-        <!-- SKIN 1 -->
-
-        <div class="skinCard">
-
-            <h3>
-                Skin1
-            </h3>
-
-            <div class="skinPreview">
-
-                <img
-                    src="skin1.png"
-                    alt="Skin1"
-                    id="skin1Preview"
-                    onerror="
-                    this.style.display='none';
-                    document.getElementById('skin1Fallback').style.display='block';
-                    "
-                >
-
-                <span
-                    id="skin1Fallback"
-                    class="skinFallback"
-                    style="display:none;">
-
-                    Upload skin1.png
-
-                </span>
-
-            </div>
-
-            <button
-                id="equipSkin1Button"
-                class="menuButton">
-
-                EQUIP SKIN1
-
-            </button>
-
-            <div
-                id="skin1EquippedText"
-                class="equippedText">
-
-                ✓ EQUIPPED
-
-            </div>
-
-        </div>
-
-
-        <div
-            style="
-            height:160px;
-            padding:30px;
-            text-align:center;
-            color:#888;
-            ">
-
-            More 737 skins coming later...
-
-        </div>
-
+    <div class="shop-tabs">
+      <button id="tab737" class="active">✈️ 737</button>
+      <button id="tabSpecial">⭐ SPECIAL</button>
     </div>
 
+    <div id="shop737" class="shop-grid">
+      <div class="skin-card">
+        <img src="plane.png" alt="Default 737">
+        <h3>Classic 737</h3>
+        <p>Original aircraft</p>
+        <button id="equipDefaultButton">EQUIP</button>
+      </div>
+
+      <div class="skin-card">
+        <img src="skin1.png" alt="737 Skin 1">
+        <h3>737 Skin 1</h3>
+        <p>Alternative aircraft skin</p>
+        <button id="equipSkin1Button">EQUIP</button>
+      </div>
+    </div>
+
+    <div id="shopSpecial" class="shop-grid hidden">
+      <div class="skin-card special-card">
+        <img src="takla.png" alt="Takla special plane">
+        <h3>⭐ TAKLA PLANE</h3>
+        <p>Special aircraft</p>
+        <button id="equipTaklaButton">EQUIP</button>
+      </div>
+    </div>
+
+    <div class="skin-card coming-soon" style="margin-top:16px">
+      <h3>🪙 COIN SKIN</h3>
+      <p>New coin designs are on the way!</p>
+      <button disabled>COMING SOON</button>
+    </div>
+
+    <div style="margin-top:20px">
+      <button id="closeShopButton" style="background:#526579;box-shadow:0 4px 0 #2a3948">
+        CLOSE SHOP
+      </button>
+    </div>
+  </div>
 </div>
 
-
-<!-- MOBILE CONTROLS -->
-
-<div id="mobileControls">
-
-    <button
-        id="upButton"
-        class="controlButton">
-
-        ▲
-
-    </button>
-
-    <button
-        id="downButton"
-        class="controlButton">
-
-        ▼
-
-    </button>
-
+<div id="mobileControls" class="hidden">
+  <button id="upButton" class="control-button" aria-label="Move up">▲</button>
+  <button id="downButton" class="control-button" aria-label="Move down">▼</button>
 </div>
 
+<div id="version">Version-2.0</div>
 
 <script>
+"use strict";
 
-/* =====================================================
-   CANVAS
-===================================================== */
+/* -------------------- ASSETS -------------------- */
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-const canvas =
-    document.getElementById(
-        "gameCanvas"
-    );
+function loadImage(src) {
+  const img = new Image();
+  img.src = src;
+  return img;
+}
 
-const ctx =
-    canvas.getContext("2d");
-
-let W =
-    window.innerWidth;
-
-let H =
-    window.innerHeight;
-
-
-/* =====================================================
-   PLANE
-   IMPORTANT:
-   plane is created BEFORE resizeCanvas().
-===================================================== */
-
-const plane = {
-
-    x: 80,
-
-    y: 250,
-
-    width: 150,
-
-    height: 75,
-
-    maxWidth: 150,
-
-    maxHeight: 75,
-
-    baseSpeed: 5.2,
-
-    speed: 5.2
+const images = {
+  plane: loadImage("plane.png"),
+  skin1: loadImage("skin1.png"),
+  takla: loadImage("takla.png"),
+  missile: loadImage("missile.png")
 };
 
+/* sound1.mp3 is used for button actions and collecting coins. */
+const soundEffect = new Audio("sound1.mp3");
+soundEffect.preload = "auto";
+soundEffect.volume = 0.55;
 
-/* =====================================================
-   RESIZE
-===================================================== */
-
-function resizeCanvas() {
-
-    W =
-        window.innerWidth;
-
-    H =
-        window.innerHeight;
-
-    canvas.width =
-        W;
-
-    canvas.height =
-        H;
-
-    if (
-        plane.y >
-        H - plane.height
-    ) {
-
-        plane.y =
-            Math.max(
-                0,
-                H - plane.height
-            );
+function playSound() {
+  try {
+    soundEffect.currentTime = 0;
+    const result = soundEffect.play();
+    if (result && typeof result.catch === "function") {
+      result.catch(() => {});
     }
+  } catch (error) {
+    // The game can still run if audio is unavailable.
+  }
 }
 
-
-/*
-   IMPORTANT FIX:
-   This is AFTER plane exists.
-*/
-
-resizeCanvas();
-
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
-
-
-/* =====================================================
-   IMAGES
-===================================================== */
-
-const planeImage =
-    new Image();
-
-planeImage.src =
-    "plane.png";
-
-
-const skin1Image =
-    new Image();
-
-skin1Image.src =
-    "skin1.png";
-
-
-const missileImage =
-    new Image();
-
-missileImage.src =
-    "missile.png";
-
-
-/* =====================================================
-   SELECTED SKIN
-===================================================== */
-
-let selectedSkin =
-    localStorage.getItem(
-        "selected737Skin"
-    ) || "default";
-
-
-function getSelectedPlaneImage() {
-
-    if (
-        selectedSkin === "skin1" &&
-        skin1Image.complete &&
-        skin1Image.naturalWidth > 0
-    ) {
-
-        return skin1Image;
-    }
-
-    return planeImage;
-}
-
-
-/* =====================================================
-   COINS
-===================================================== */
-
-let savedCoins =
-    parseInt(
-        localStorage.getItem(
-            "skyEscapeCoins"
-        ) || "0",
-        10
-    );
-
-
-if (
-    !Number.isFinite(savedCoins) ||
-    savedCoins < 0
-) {
-
-    savedCoins = 0;
-}
-
-
-let runCoins = 0;
-
-
-function saveCoins() {
-
-    localStorage.setItem(
-        "skyEscapeCoins",
-        String(savedCoins)
-    );
-}
-
-
-function updateCoinUI() {
-
-    document.getElementById(
-        "menuCoins"
-    ).textContent =
-        savedCoins;
-
-    document.getElementById(
-        "gameOverCoins"
-    ).textContent =
-        savedCoins;
-
-    document.getElementById(
-        "shopCoins"
-    ).textContent =
-        savedCoins;
-
-    document.getElementById(
-        "coinBox"
-    ).textContent =
-        "🪙 " +
-        savedCoins;
-}
-
-
-/* =====================================================
-   GAME STATE
-===================================================== */
-
-let score = 0;
+/* -------------------- GAME STATE -------------------- */
+let W = 0;
+let H = 0;
+let dpr = 1;
 
 let gameRunning = false;
-
-let gameOverShown = false;
-
-let animationFrameId = null;
-
-
-/* =====================================================
-   INPUT
-===================================================== */
-
-let movingUp = false;
-
-let movingDown = false;
-
-
-/* =====================================================
-   OBJECTS
-===================================================== */
-
-let missiles = [];
-
-let coins = [];
-
-let clouds = [];
-
-
-/* =====================================================
-   TIMERS
-===================================================== */
-
-let frameCount = 0;
-
-let timeOfDayTimer = 0;
-
-
-/* =====================================================
-   SPEED
-===================================================== */
-
-let gameSpeed = 1;
-
-const maximumSpeed = 1.65;
-
-
-/* =====================================================
-   PLANE IMAGE SIZE
-===================================================== */
-
-function calculatePlaneSize() {
-
-    const img =
-        getSelectedPlaneImage();
-
-    if (
-        !img.naturalWidth ||
-        !img.naturalHeight
-    ) {
-
-        return;
-    }
-
-    const ratio =
-        img.naturalWidth /
-        img.naturalHeight;
-
-    let width =
-        plane.maxWidth;
-
-    let height =
-        width / ratio;
-
-    if (
-        height >
-        plane.maxHeight
-    ) {
-
-        height =
-            plane.maxHeight;
-
-        width =
-            height * ratio;
-    }
-
-    plane.width =
-        width;
-
-    plane.height =
-        height;
-}
-
-
-planeImage.onload =
-    calculatePlaneSize;
-
-skin1Image.onload =
-    calculatePlaneSize;
-
-
-/* =====================================================
-   TIME
-===================================================== */
-
-const dayLength =
-    30 * 60;
-
-const afternoonLength =
-    30 * 60;
-
-const nightLength =
-    30 * 60;
-
-
-function getTimeOfDay() {
-
-    const total =
-        dayLength +
-        afternoonLength +
-        nightLength;
-
-    const t =
-        timeOfDayTimer %
-        total;
-
-    if (
-        t < dayLength
-    ) {
-
-        return "day";
-    }
-
-    if (
-        t <
-        dayLength +
-        afternoonLength
-    ) {
-
-        return "afternoon";
-    }
-
-    return "night";
-}
-
-
-/* =====================================================
-   SKY
-===================================================== */
-
-function drawSky() {
-
-    const time =
-        getTimeOfDay();
-
-    let top;
-    let bottom;
-
-    if (
-        time === "day"
-    ) {
-
-        top = "#4facfe";
-        bottom = "#c8f0ff";
-
-    } else if (
-        time === "afternoon"
-    ) {
-
-        top = "#df7658";
-        bottom = "#ffd194";
-
-    } else {
-
-        top = "#07152f";
-        bottom = "#1d3157";
-    }
-
-    const gradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            H
-        );
-
-    gradient.addColorStop(
-        0,
-        top
-    );
-
-    gradient.addColorStop(
-        1,
-        bottom
-    );
-
-    ctx.fillStyle =
-        gradient;
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-    drawSunMoon(
-        time
-    );
-}
-
-
-/* =====================================================
-   SUN / MOON
-===================================================== */
-
-function drawSunMoon(
-    time
-) {
-
-    if (
-        time === "night"
-    ) {
-
-        ctx.beginPath();
-
-        ctx.arc(
-            W - 100,
-            90,
-            35,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-            "#f2efc7";
-
-        ctx.fill();
-
-        ctx.fillStyle =
-            "rgba(255,255,255,0.8)";
-
-        for (
-            let i = 0;
-            i < 35;
-            i++
-        ) {
-
-            const x =
-                (i * 83 + 17) %
-                Math.max(W, 1);
-
-            const y =
-                (i * 47 + 25) %
-                Math.max(H * 0.65, 100);
-
-            ctx.fillRect(
-                x,
-                y,
-                2,
-                2
-            );
-        }
-
-        return;
-    }
-
-    ctx.beginPath();
-
-    ctx.arc(
-        W - 105,
-        90,
-        40,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        time === "afternoon"
-        ? "#ffc95b"
-        : "#fff3a1";
-
-    ctx.fill();
-}
-
-
-/* =====================================================
-   CLOUDS
-===================================================== */
-
-function createCloud(
-    x,
-    y
-) {
-
-    return {
-
-        x: x,
-
-        y: y,
-
-        size:
-            28 +
-            Math.random() * 38,
-
-        speed:
-            0.5 +
-            Math.random() * 0.7
-    };
-}
-
-
-function createClouds() {
-
-    clouds = [];
-
-    for (
-        let i = 0;
-        i < 8;
-        i++
-    ) {
-
-        clouds.push(
-            createCloud(
-                Math.random() * W,
-                50 +
-                Math.random() *
-                Math.max(
-                    100,
-                    H * 0.55
-                )
-            )
-        );
-    }
-}
-
-
-function updateClouds() {
-
-    for (
-        const cloud of clouds
-    ) {
-
-        cloud.x -=
-            cloud.speed *
-            gameSpeed;
-
-        if (
-            cloud.x < -160
-        ) {
-
-            cloud.x =
-                W + 120;
-
-            cloud.y =
-                50 +
-                Math.random() *
-                Math.max(
-                    100,
-                    H * 0.55
-                );
-        }
-    }
-}
-
-
-function drawCloud(
-    cloud
-) {
-
-    const opacity =
-        getTimeOfDay() === "night"
-        ? 0.20
-        : 0.65;
-
-    ctx.fillStyle =
-        "rgba(255,255,255," +
-        opacity +
-        ")";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        cloud.x,
-        cloud.y,
-        cloud.size * 0.55,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.arc(
-        cloud.x +
-        cloud.size * 0.55,
-        cloud.y - 12,
-        cloud.size * 0.72,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.arc(
-        cloud.x +
-        cloud.size,
-        cloud.y,
-        cloud.size * 0.50,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-}
-
-
-/* =====================================================
-   MISSILES
-===================================================== */
-
-function getMissileSize() {
-
-    let width = 75;
-
-    let height = 35;
-
-    if (
-        missileImage.naturalWidth > 0 &&
-        missileImage.naturalHeight > 0
-    ) {
-
-        const ratio =
-            missileImage.naturalWidth /
-            missileImage.naturalHeight;
-
-        width = 75;
-
-        height =
-            width / ratio;
-
-        if (
-            height > 45
-        ) {
-
-            height = 45;
-
-            width =
-                height * ratio;
-        }
-    }
-
-    return {
-        width,
-        height
-    };
-}
-
-
-function spawnMissile() {
-
-    const size =
-        getMissileSize();
-
-    const topMargin = 55;
-
-    const bottomMargin = 105;
-
-    const available =
-        Math.max(
-            50,
-            H -
-            topMargin -
-            bottomMargin -
-            size.height
-        );
-
-    missiles.push({
-
-        x:
-            W + 80,
-
-        y:
-            topMargin +
-            Math.random() *
-            available,
-
-        width:
-            size.width,
-
-        height:
-            size.height,
-
-        speed:
-            3.7 +
-            Math.random() * 1.4
-    });
-}
-
-
-function updateMissiles() {
-
-    for (
-        let i =
-            missiles.length - 1;
-
-        i >= 0;
-
-        i--
-    ) {
-
-        missiles[i].x -=
-            missiles[i].speed *
-            gameSpeed;
-
-        if (
-            missiles[i].x <
-            -missiles[i].width -
-            60
-        ) {
-
-            missiles.splice(
-                i,
-                1
-            );
-        }
-    }
-}
-
-
-function drawMissile(
-    missile
-) {
-
-    if (
-        missileImage.complete &&
-        missileImage.naturalWidth > 0
-    ) {
-
-        ctx.drawImage(
-
-            missileImage,
-
-            missile.x,
-            missile.y,
-
-            missile.width,
-            missile.height
-        );
-
-    } else {
-
-        ctx.fillStyle =
-            "#555";
-
-        ctx.fillRect(
-
-            missile.x,
-            missile.y,
-
-            missile.width,
-            missile.height
-        );
-    }
-}
-
-
-/* =====================================================
-   COINS
-===================================================== */
-
-function spawnCoin() {
-
-    const radius = 14;
-
-    const topMargin = 65;
-
-    const bottomMargin = 105;
-
-    const available =
-        Math.max(
-            50,
-            H -
-            topMargin -
-            bottomMargin
-        );
-
-    coins.push({
-
-        x:
-            W + 40,
-
-        y:
-            topMargin +
-            Math.random() *
-            available,
-
-        radius:
-            radius,
-
-        speed:
-            2.8 +
-            Math.random() * 0.9
-    });
-}
-
-
-function updateCoins() {
-
-    for (
-        let i =
-            coins.length - 1;
-
-        i >= 0;
-
-        i--
-    ) {
-
-        coins[i].x -=
-            coins[i].speed *
-            gameSpeed;
-
-        if (
-            coins[i].x < -50
-        ) {
-
-            coins.splice(
-                i,
-                1
-            );
-        }
-    }
-}
-
-
-function drawCoin(
-    coin
-) {
-
-    ctx.beginPath();
-
-    ctx.arc(
-        coin.x,
-        coin.y,
-        coin.radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        "#ffd700";
-
-    ctx.fill();
-
-    ctx.strokeStyle =
-        "#a97900";
-
-    ctx.lineWidth = 2;
-
-    ctx.stroke();
-
-    ctx.fillStyle =
-        "#8a6200";
-
-    ctx.font =
-        "bold 14px Arial";
-
-    ctx.textAlign =
-        "center";
-
-    ctx.textBaseline =
-        "middle";
-
-    ctx.fillText(
-        "$",
-        coin.x,
-        coin.y
-    );
-}
-
-
-/* =====================================================
-   COIN COLLISION
-===================================================== */
-
-function collectCoin(
-    coin
-) {
-
-    const padding = 16;
-
-    const left =
-        plane.x -
-        padding;
-
-    const right =
-        plane.x +
-        plane.width +
-        padding;
-
-    const top =
-        plane.y -
-        padding;
-
-    const bottom =
-        plane.y +
-        plane.height +
-        padding;
-
-    const closestX =
-        Math.max(
-            left,
-            Math.min(
-                coin.x,
-                right
-            )
-        );
-
-    const closestY =
-        Math.max(
-            top,
-            Math.min(
-                coin.y,
-                bottom
-            )
-        );
-
-    const dx =
-        coin.x -
-        closestX;
-
-    const dy =
-        coin.y -
-        closestY;
-
-    return (
-        dx * dx +
-        dy * dy
-        <=
-        coin.radius *
-        coin.radius
-    );
-}
-
-
-/* =====================================================
-   MISSILE COLLISION
-===================================================== */
-
-function missileCollision(
-    missile
-) {
-
-    const px =
-        plane.x +
-        plane.width * 0.10;
-
-    const py =
-        plane.y +
-        plane.height * 0.15;
-
-    const pw =
-        plane.width * 0.80;
-
-    const ph =
-        plane.height * 0.70;
-
-    return (
-
-        px <
-        missile.x +
-        missile.width
-
-        &&
-
-        px + pw >
-        missile.x
-
-        &&
-
-        py <
-        missile.y +
-        missile.height
-
-        &&
-
-        py + ph >
-        missile.y
-    );
-}
-
-
-/* =====================================================
-   PLANE
-===================================================== */
-
-function updatePlane() {
-
-    if (
-        movingUp
-    ) {
-
-        plane.y -=
-            plane.speed;
-    }
-
-    if (
-        movingDown
-    ) {
-
-        plane.y +=
-            plane.speed;
-    }
-
-    if (
-        plane.y < 0
-    ) {
-
-        plane.y = 0;
-    }
-
-    const bottom =
-        H -
-        plane.height;
-
-    if (
-        plane.y >
-        bottom
-    ) {
-
-        plane.y =
-            Math.max(
-                0,
-                bottom
-            );
-    }
-}
-
-
-function drawPlane() {
-
-    const image =
-        getSelectedPlaneImage();
-
-    if (
-        image.complete &&
-        image.naturalWidth > 0
-    ) {
-
-        ctx.drawImage(
-
-            image,
-
-            plane.x,
-            plane.y,
-
-            plane.width,
-            plane.height
-        );
-
-    } else {
-
-        ctx.fillStyle =
-            "white";
-
-        ctx.fillRect(
-
-            plane.x,
-            plane.y,
-
-            plane.width,
-            plane.height
-        );
-    }
-}
-
-
-/* =====================================================
-   DIFFICULTY
-===================================================== */
-
-function updateDifficulty() {
-
-    if (
-        frameCount > 0 &&
-        frameCount % 600 === 0
-    ) {
-
-        gameSpeed +=
-            0.08;
-
-        if (
-            gameSpeed >
-            maximumSpeed
-        ) {
-
-            gameSpeed =
-                maximumSpeed;
-        }
-    }
-
-    plane.speed =
-        plane.baseSpeed *
-        (
-            1 +
-            (gameSpeed - 1) *
-            0.45
-        );
-}
-
-
-/* =====================================================
-   SCORE
-===================================================== */
-
-function updateScoreUI() {
-
-    document.getElementById(
-        "scoreBox"
-    ).textContent =
-        "Score: " +
-        Math.floor(score);
-}
-
-
-/* =====================================================
-   START GAME
-===================================================== */
-
-function startGame() {
-
-    if (
-        animationFrameId !== null
-    ) {
-
-        cancelAnimationFrame(
-            animationFrameId
-        );
-
-        animationFrameId =
-            null;
-    }
-
-    document.getElementById(
-        "menu"
-    ).style.display =
-        "none";
-
-    document.getElementById(
-        "gameOver"
-    ).style.display =
-        "none";
-
-    document.getElementById(
-        "shopWindow"
-    ).style.display =
-        "none";
-
-    score = 0;
-
-    runCoins = 0;
-
-    frameCount = 0;
-
-    timeOfDayTimer = 0;
-
-    gameSpeed = 1;
-
-    gameOverShown = false;
-
-    missiles = [];
-
-    coins = [];
-
-    calculatePlaneSize();
-
-    plane.x =
-        Math.max(
-            30,
-            W * 0.10
-        );
-
-    plane.y =
-        Math.max(
-            0,
-            H / 2 -
-            plane.height / 2
-        );
-
-    plane.speed =
-        plane.baseSpeed;
-
-    movingUp = false;
-
-    movingDown = false;
-
-    gameRunning = true;
-
-    updateScoreUI();
-
-    updateCoinUI();
-
-    animationFrameId =
-        requestAnimationFrame(
-            gameLoop
-        );
-}
-
-
-/* =====================================================
-   GAME OVER
-===================================================== */
-
-function endGame() {
-
-    if (
-        !gameRunning ||
-        gameOverShown
-    ) {
-
-        return;
-    }
-
-    gameRunning = false;
-
-    gameOverShown = true;
-
-    movingUp = false;
-
-    movingDown = false;
-
-    if (
-        animationFrameId !== null
-    ) {
-
-        cancelAnimationFrame(
-            animationFrameId
-        );
-
-        animationFrameId =
-            null;
-    }
-
-    document.getElementById(
-        "finalScore"
-    ).textContent =
-        Math.floor(score);
-
-    document.getElementById(
-        "runCoins"
-    ).textContent =
-        runCoins;
-
-    document.getElementById(
-        "gameOverCoins"
-    ).textContent =
-        savedCoins;
-
-    document.getElementById(
-        "gameOver"
-    ).style.display =
-        "flex";
-}
-
-
-/* =====================================================
-   SHOP
-===================================================== */
-
+let gameStarted = false;
+let gameOver = false;
 let shopWasRunning = false;
 
+let score = 0;
+let runCoins = 0;
+let savedCoins = readNumber("skyEscapeCoins", 0);
 
-function openShop() {
-
-    shopWasRunning =
-        gameRunning;
-
-    gameRunning = false;
-
-    movingUp = false;
-
-    movingDown = false;
-
-    if (
-        animationFrameId !== null
-    ) {
-
-        cancelAnimationFrame(
-            animationFrameId
-        );
-
-        animationFrameId =
-            null;
-    }
-
-    updateCoinUI();
-
-    updateSkinUI();
-
-    document.getElementById(
-        "shopWindow"
-    ).style.display =
-        "block";
+let selectedSkin = localStorage.getItem("selected737Skin") || "plane";
+if (!["plane", "skin1", "takla"].includes(selectedSkin)) {
+  selectedSkin = "plane";
 }
 
+let frame = 0;
+let speed = 3;
+let spawnTimer = 0;
+let coinTimer = 0;
+let animationId = 0;
+let lastTime = 0;
+let timeOfDayTimer = 0;
+let skyPhase = 0;
+
+const plane = {
+  x: 85,
+  y: 200,
+  width: 74,
+  height: 42,
+  speed: 5
+};
+
+let missiles = [];
+let coins = [];
+let clouds = [];
+
+const keys = { up: false, down: false };
+
+function readNumber(key, fallback) {
+  try {
+    const value = Number(localStorage.getItem(key));
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem("skyEscapeCoins", String(savedCoins));
+    localStorage.setItem("selected737Skin", selectedSkin);
+  } catch (error) {
+    // The game still works if browser storage is unavailable.
+  }
+}
+
+function currentPlaneImage() {
+  return images[selectedSkin] || images.plane;
+}
+
+/* -------------------- RESIZE -------------------- */
+function resizeCanvas() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  plane.x = Math.min(plane.x, W * 0.35);
+  plane.y = Math.max(50, Math.min(plane.y, H - 80));
+
+  createClouds();
+}
+
+/* -------------------- BACKGROUND -------------------- */
+function createClouds() {
+  clouds = [];
+  for (let i = 0; i < 9; i++) {
+    clouds.push({
+      x: Math.random() * Math.max(W, 1),
+      y: 35 + Math.random() * Math.max(H - 100, 1),
+      size: 18 + Math.random() * 32,
+      speed: 0.4 + Math.random() * 0.8
+    });
+  }
+}
+
+function drawBackground() {
+  const phase = Math.floor(timeOfDayTimer / 1800) % 3;
+
+  let top, bottom;
+  if (phase === 0) {
+    top = "#56b7f5";
+    bottom = "#d8f4ff";
+  } else if (phase === 1) {
+    top = "#ff9e66";
+    bottom = "#ffe0a1";
+  } else {
+    top = "#07142e";
+    bottom = "#203a68";
+  }
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, top);
+  gradient.addColorStop(1, bottom);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, W, H);
+
+  if (phase === 2) {
+    ctx.fillStyle = "#fff8c8";
+    for (let i = 0; i < 45; i++) {
+      const x = (i * 97 + 31) % Math.max(W, 1);
+      const y = (i * 67 + 19) % Math.max(H * 0.75, 1);
+      ctx.fillRect(x, y, 2, 2);
+    }
+  } else {
+    ctx.fillStyle = phase === 1 ? "#fff1ad" : "#fff9c2";
+    ctx.beginPath();
+    ctx.arc(W - 65, 85, 25, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  for (const cloud of clouds) {
+    drawCloud(cloud.x, cloud.y, cloud.size);
+    if (gameRunning) {
+      cloud.x -= cloud.speed + speed * 0.12;
+      if (cloud.x < -cloud.size * 3) {
+        cloud.x = W + cloud.size;
+        cloud.y = 25 + Math.random() * Math.max(H - 90, 1);
+      }
+    }
+  }
+
+  // Distant hills
+  ctx.fillStyle = phase === 2 ? "#172c4a" : "#72b5a0";
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  ctx.lineTo(0, H * 0.82);
+  for (let x = 0; x <= W + 80; x += 80) {
+    ctx.lineTo(x, H * (0.78 + Math.sin(x * 0.012) * 0.045));
+  }
+  ctx.lineTo(W, H);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawCloud(x, y, s) {
+  ctx.fillStyle = "#ffffffb8";
+  ctx.beginPath();
+  ctx.ellipse(x, y, s, s * 0.42, 0, 0, Math.PI * 2);
+  ctx.ellipse(x - s * 0.42, y + 3, s * 0.48, s * 0.32, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + s * 0.38, y + 3, s * 0.48, s * 0.32, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* -------------------- DRAW AIRCRAFT -------------------- */
+function drawPlane() {
+  const img = currentPlaneImage();
+
+  if (img && img.complete && img.naturalWidth > 0) {
+    ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
+  } else {
+    // Fallback drawing if an image has not loaded.
+    ctx.fillStyle = selectedSkin === "takla" ? "#ffcf45" : "#f4f8ff";
+    ctx.beginPath();
+    ctx.moveTo(plane.x, plane.y + plane.height * 0.45);
+    ctx.lineTo(plane.x + plane.width, plane.y + plane.height * 0.5);
+    ctx.lineTo(plane.x + plane.width * 0.72, plane.y + plane.height * 0.68);
+    ctx.lineTo(plane.x + plane.width * 0.35, plane.y + plane.height * 0.65);
+    ctx.lineTo(plane.x + plane.width * 0.18, plane.y + plane.height);
+    ctx.lineTo(plane.x + plane.width * 0.1, plane.y + plane.height * 0.55);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+/* -------------------- MISSILES -------------------- */
+function spawnMissile() {
+  const h = 28 + Math.random() * 12;
+  missiles.push({
+    x: W + 35,
+    y: 65 + Math.random() * Math.max(H - 150, 1),
+    width: 48,
+    height: h
+  });
+}
+
+function drawMissile(m) {
+  const img = images.missile;
+  if (img && img.complete && img.naturalWidth > 0) {
+    ctx.drawImage(img, m.x, m.y, m.width, m.height);
+  } else {
+    ctx.fillStyle = "#e94a43";
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y + m.height * 0.5);
+    ctx.lineTo(m.x + m.width * 0.72, m.y);
+    ctx.lineTo(m.x + m.width, m.y + m.height * 0.5);
+    ctx.lineTo(m.x + m.width * 0.72, m.y + m.height);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#ffb64a";
+    ctx.fillRect(m.x + m.width * 0.05, m.y + m.height * 0.34, 8, m.height * 0.32);
+  }
+}
+
+/* -------------------- COINS -------------------- */
+function spawnCoin() {
+  coins.push({
+    x: W + 20,
+    y: 65 + Math.random() * Math.max(H - 150, 1),
+    radius: 11,
+    spin: Math.random() * Math.PI
+  });
+}
+
+function drawCoin(c) {
+  c.spin += 0.08;
+  const width = Math.max(4, Math.abs(Math.cos(c.spin)) * c.radius * 2);
+
+  ctx.fillStyle = "#9b6700";
+  ctx.beginPath();
+  ctx.ellipse(c.x, c.y + 2, width, c.radius, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#ffd83d";
+  ctx.beginPath();
+  ctx.ellipse(c.x, c.y, width * 0.86, c.radius * 0.86, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#fff3a1";
+  ctx.font = "bold 13px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("$", c.x, c.y);
+}
+
+/* -------------------- COLLISIONS -------------------- */
+function overlaps(a, b) {
+  return (
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y
+  );
+}
+
+function collectCoins() {
+  const planeBox = {
+    x: plane.x + 8,
+    y: plane.y + 5,
+    width: plane.width - 16,
+    height: plane.height - 10
+  };
+
+  coins = coins.filter(c => {
+    const coinBox = {
+      x: c.x - c.radius,
+      y: c.y - c.radius,
+      width: c.radius * 2,
+      height: c.radius * 2
+    };
+
+    if (overlaps(planeBox, coinBox)) {
+      runCoins++;
+      savedCoins++;
+      saveProgress();
+      updateCoinDisplays();
+      playSound();
+      return false;
+    }
+    return true;
+  });
+}
+
+/* -------------------- GAME LOOP -------------------- */
+function drawScene() {
+  drawBackground();
+
+  for (const m of missiles) drawMissile(m);
+  for (const c of coins) drawCoin(c);
+
+  drawPlane();
+}
+
+function updateGame(delta) {
+  if (!gameRunning) return;
+
+  const dt = Math.min(delta / 16.67, 2);
+
+  frame += dt;
+  timeOfDayTimer += dt;
+
+  score = Math.floor(frame / 6);
+  speed = Math.min(3 + frame / 1200, 9);
+
+  if (keys.up) plane.y -= plane.speed * dt;
+  if (keys.down) plane.y += plane.speed * dt;
+
+  plane.y = Math.max(45, Math.min(H - plane.height - 15, plane.y));
+
+  spawnTimer += dt;
+  coinTimer += dt;
+
+  const missileInterval = Math.max(42, 95 - frame / 90);
+  if (spawnTimer > missileInterval) {
+    spawnMissile();
+    spawnTimer = 0;
+  }
+
+  if (coinTimer > 75) {
+    spawnCoin();
+    coinTimer = 0;
+  }
+
+  missiles.forEach(m => { m.x -= speed * dt; });
+  coins.forEach(c => { c.x -= speed * dt; });
+
+  missiles = missiles.filter(m => m.x + m.width > -10);
+  coins = coins.filter(c => c.x + c.radius > -10);
+
+  const planeBox = {
+    x: plane.x + 10,
+    y: plane.y + 7,
+    width: plane.width - 18,
+    height: plane.height - 14
+  };
+
+  for (const m of missiles) {
+    const missileBox = {
+      x: m.x + 5,
+      y: m.y + 4,
+      width: m.width - 10,
+      height: m.height - 8
+    };
+    if (overlaps(planeBox, missileBox)) {
+      endGame();
+      return;
+    }
+  }
+
+  collectCoins();
+  document.getElementById("scoreBox").textContent = score;
+}
+
+function loop(timestamp) {
+  const delta = lastTime ? timestamp - lastTime : 16.67;
+  lastTime = timestamp;
+
+  updateGame(delta);
+  drawScene();
+
+  animationId = requestAnimationFrame(loop);
+}
+
+/* -------------------- GAME CONTROLS -------------------- */
+function startGame() {
+  playSound();
+
+  score = 0;
+  runCoins = 0;
+  frame = 0;
+  speed = 3;
+  spawnTimer = 0;
+  coinTimer = 0;
+  timeOfDayTimer = 0;
+  missiles = [];
+  coins = [];
+
+  plane.x = Math.max(35, W * 0.12);
+  plane.y = H * 0.45;
+
+  gameOver = false;
+  gameStarted = true;
+  gameRunning = true;
+  lastTime = 0;
+
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("gameOver").classList.add("hidden");
+  document.getElementById("topBar").classList.remove("hidden");
+  document.getElementById("mobileControls").classList.remove("hidden");
+
+  updateCoinDisplays();
+}
+
+function endGame() {
+  if (gameOver) return;
+
+  gameOver = true;
+  gameRunning = false;
+  keys.up = false;
+  keys.down = false;
+
+  document.getElementById("finalScore").textContent = score;
+  document.getElementById("runCoins").textContent = runCoins;
+  document.getElementById("gameOverCoins").textContent = savedCoins;
+
+  document.getElementById("gameOver").classList.remove("hidden");
+  document.getElementById("mobileControls").classList.add("hidden");
+  document.getElementById("topBar").classList.add("hidden");
+
+  playSound();
+}
+
+function updateCoinDisplays() {
+  document.getElementById("coinBox").textContent = savedCoins;
+  document.getElementById("shopCoins").textContent = savedCoins;
+  document.getElementById("gameOverCoins").textContent = savedCoins;
+}
+
+/* -------------------- SHOP -------------------- */
+function openShop() {
+  playSound();
+  shopWasRunning = gameRunning;
+  gameRunning = false;
+
+  document.getElementById("shopWindow").classList.remove("hidden");
+  document.getElementById("mobileControls").classList.add("hidden");
+
+  updateCoinDisplays();
+  updateEquipButtons();
+}
 
 function closeShop() {
+  playSound();
+  document.getElementById("shopWindow").classList.add("hidden");
 
-    document.getElementById(
-        "shopWindow"
-    ).style.display =
-        "none";
+  if (shopWasRunning && !gameOver) {
+    gameRunning = true;
+    document.getElementById("mobileControls").classList.remove("hidden");
+  }
 
-    if (
-        shopWasRunning &&
-        !gameOverShown
-    ) {
-
-        gameRunning = true;
-
-        animationFrameId =
-            requestAnimationFrame(
-                gameLoop
-            );
-    }
-
-    shopWasRunning =
-        false;
+  shopWasRunning = false;
 }
 
+function showShopTab(tab) {
+  playSound();
 
-/* =====================================================
-   DEFAULT SKIN
-===================================================== */
+  const is737 = tab === "737";
 
-function equipDefault() {
+  document.getElementById("shop737").classList.toggle("hidden", !is737);
+  document.getElementById("shopSpecial").classList.toggle("hidden", is737);
 
-    selectedSkin =
-        "default";
-
-    localStorage.setItem(
-        "selected737Skin",
-        "default"
-    );
-
-    calculatePlaneSize();
-
-    updateSkinUI();
+  document.getElementById("tab737").classList.toggle("active", is737);
+  document.getElementById("tabSpecial").classList.toggle("active", !is737);
 }
 
+function equipSkin(skin) {
+  if (!images[skin]) return;
 
-/* =====================================================
-   SKIN1
-===================================================== */
-
-function equipSkin1() {
-
-    if (
-        !skin1Image.complete ||
-        skin1Image.naturalWidth <= 0
-    ) {
-
-        alert(
-            "skin1.png was not found. Upload skin1.png beside index.html."
-        );
-
-        return;
-    }
-
-    selectedSkin =
-        "skin1";
-
-    localStorage.setItem(
-        "selected737Skin",
-        "skin1"
-    );
-
-    calculatePlaneSize();
-
-    updateSkinUI();
+  selectedSkin = skin;
+  saveProgress();
+  updateEquipButtons();
+  playSound();
 }
 
+function updateEquipButtons() {
+  const defaultButton = document.getElementById("equipDefaultButton");
+  const skin1Button = document.getElementById("equipSkin1Button");
+  const taklaButton = document.getElementById("equipTaklaButton");
 
-/* =====================================================
-   SHOP UI
-===================================================== */
+  defaultButton.textContent = selectedSkin === "plane" ? "✓ EQUIPPED" : "EQUIP";
+  skin1Button.textContent = selectedSkin === "skin1" ? "✓ EQUIPPED" : "EQUIP";
+  taklaButton.textContent = selectedSkin === "takla" ? "✓ EQUIPPED" : "EQUIP";
 
-function updateSkinUI() {
-
-    const defaultButton =
-        document.getElementById(
-            "equipDefaultButton"
-        );
-
-    const skin1Button =
-        document.getElementById(
-            "equipSkin1Button"
-        );
-
-    const defaultText =
-        document.getElementById(
-            "defaultEquippedText"
-        );
-
-    const skin1Text =
-        document.getElementById(
-            "skin1EquippedText"
-        );
-
-
-    if (
-        selectedSkin ===
-        "default"
-    ) {
-
-        defaultButton.textContent =
-            "✓ EQUIPPED";
-
-        defaultButton.classList.add(
-            "equipped"
-        );
-
-        defaultText.style.display =
-            "block";
-
-    } else {
-
-        defaultButton.textContent =
-            "EQUIP DEFAULT";
-
-        defaultButton.classList.remove(
-            "equipped"
-        );
-
-        defaultText.style.display =
-            "none";
-    }
-
-
-    if (
-        selectedSkin ===
-        "skin1"
-    ) {
-
-        skin1Button.textContent =
-            "✓ EQUIPPED";
-
-        skin1Button.classList.add(
-            "equipped"
-        );
-
-        skin1Text.style.display =
-            "block";
-
-    } else {
-
-        skin1Button.textContent =
-            "EQUIP SKIN1";
-
-        skin1Button.classList.remove(
-            "equipped"
-        );
-
-        skin1Text.style.display =
-            "none";
-    }
+  updateCoinDisplays();
 }
 
-
-/* =====================================================
-   GAME LOOP
-===================================================== */
-
-function gameLoop() {
-
-    if (
-        !gameRunning
-    ) {
-
-        animationFrameId =
-            null;
-
-        return;
-    }
-
-    frameCount++;
-
-    timeOfDayTimer++;
-
-
-    /* SCORE */
-
-    score += 0.1;
-
-    updateScoreUI();
-
-
-    /* DIFFICULTY */
-
-    updateDifficulty();
-
-
-    /* SKY */
-
-    drawSky();
-
-
-    /* CLOUDS */
-
-    updateClouds();
-
-    for (
-        const cloud of clouds
-    ) {
-
-        drawCloud(
-            cloud
-        );
-    }
-
-
-    /* PLANE */
-
-    updatePlane();
-
-
-    /* MISSILE SPAWN */
-
-    const missileSpawnRate =
-        Math.max(
-            72,
-            Math.floor(
-                125 -
-                (gameSpeed - 1) *
-                45
-            )
-        );
-
-    if (
-        frameCount %
-        missileSpawnRate ===
-        0
-    ) {
-
-        spawnMissile();
-    }
-
-
-    /* COIN SPAWN */
-
-    if (
-        frameCount % 85 === 0
-    ) {
-
-        spawnCoin();
-    }
-
-
-    /* UPDATE OBJECTS */
-
-    updateMissiles();
-
-    updateCoins();
-
-
-    /* MISSILES */
-
-    for (
-        const missile of missiles
-    ) {
-
-        drawMissile(
-            missile
-        );
-
-        if (
-            missileCollision(
-                missile
-            )
-        ) {
-
-            endGame();
-
-            return;
-        }
-    }
-
-
-    /* COINS */
-
-    for (
-        let i =
-            coins.length - 1;
-
-        i >= 0;
-
-        i--
-    ) {
-
-        const coin =
-            coins[i];
-
-        if (
-            collectCoin(
-                coin
-            )
-        ) {
-
-            coins.splice(
-                i,
-                1
-            );
-
-            runCoins++;
-
-            savedCoins++;
-
-            saveCoins();
-
-            updateCoinUI();
-
-            continue;
-        }
-
-        drawCoin(
-            coin
-        );
-    }
-
-
-    /* PLANE ON TOP */
-
-    drawPlane();
-
-
-    /* TIME */
-
-    ctx.fillStyle =
-        "rgba(0,0,0,0.35)";
-
-    ctx.font =
-        "bold 13px Arial";
-
-    ctx.textAlign =
-        "center";
-
-    ctx.textBaseline =
-        "alphabetic";
-
-    ctx.fillText(
-
-        getTimeOfDay()
-            .toUpperCase(),
-
-        W / 2,
-
-        27
-    );
-
-
-    /* NEXT FRAME */
-
-    animationFrameId =
-        requestAnimationFrame(
-            gameLoop
-        );
-}
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-createClouds();
-
-updateCoinUI();
-
-updateSkinUI();
-
-calculatePlaneSize();
-
-
-/* =====================================================
-   KEYBOARD
-===================================================== */
-
-window.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key ===
-            "ArrowUp"
-        ) {
-
-            movingUp = true;
-
-            event.preventDefault();
-        }
-
-        else if (
-            event.key ===
-            "ArrowDown"
-        ) {
-
-            movingDown = true;
-
-            event.preventDefault();
-        }
-    }
-);
-
-
-window.addEventListener(
-    "keyup",
-    function(event) {
-
-        if (
-            event.key ===
-            "ArrowUp"
-        ) {
-
-            movingUp = false;
-        }
-
-        else if (
-            event.key ===
-            "ArrowDown"
-        ) {
-
-            movingDown = false;
-        }
-    }
-);
-
-
-/* =====================================================
-   MOBILE CONTROLS
-===================================================== */
-
-const upButton =
-    document.getElementById(
-        "upButton"
-    );
-
-const downButton =
-    document.getElementById(
-        "downButton"
-    );
-
-
-function pressUp(event) {
-
+/* -------------------- INPUT EVENTS -------------------- */
+document.getElementById("startButton").addEventListener("click", startGame);
+document.getElementById("restartButton").addEventListener("click", startGame);
+
+document.getElementById("menuShopButton").addEventListener("click", openShop);
+document.getElementById("shopButton").addEventListener("click", openShop);
+document.getElementById("gameOverShopButton").addEventListener("click", openShop);
+document.getElementById("closeShopButton").addEventListener("click", closeShop);
+
+document.getElementById("tab737").addEventListener("click", () => showShopTab("737"));
+document.getElementById("tabSpecial").addEventListener("click", () => showShopTab("special"));
+
+document.getElementById("equipDefaultButton").addEventListener("click", () => equipSkin("plane"));
+document.getElementById("equipSkin1Button").addEventListener("click", () => equipSkin("skin1"));
+document.getElementById("equipTaklaButton").addEventListener("click", () => equipSkin("takla"));
+
+window.addEventListener("keydown", event => {
+  if (["ArrowUp", "ArrowDown", " "].includes(event.key)) {
     event.preventDefault();
+  }
 
-    movingUp = true;
-}
+  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
+    keys.up = true;
+  }
+  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
+    keys.down = true;
+  }
+});
 
+window.addEventListener("keyup", event => {
+  if (event.key === "ArrowUp" || event.key.toLowerCase() === "w") {
+    keys.up = false;
+  }
+  if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
+    keys.down = false;
+  }
+});
 
-function releaseUp(event) {
+window.addEventListener("blur", () => {
+  keys.up = false;
+  keys.down = false;
+});
 
+function bindHoldButton(id, direction) {
+  const button = document.getElementById(id);
+
+  button.addEventListener("pointerdown", event => {
     event.preventDefault();
+    keys[direction] = true;
+    try { button.setPointerCapture(event.pointerId); } catch (error) {}
+  });
 
-    movingUp = false;
-}
-
-
-function pressDown(event) {
-
+  const release = event => {
     event.preventDefault();
+    keys[direction] = false;
+  };
 
-    movingDown = true;
+  button.addEventListener("pointerup", release);
+  button.addEventListener("pointercancel", release);
+  button.addEventListener("lostpointercapture", () => {
+    keys[direction] = false;
+  });
 }
 
+bindHoldButton("upButton", "up");
+bindHoldButton("downButton", "down");
 
-function releaseDown(event) {
+window.addEventListener("resize", resizeCanvas);
 
-    event.preventDefault();
+/* -------------------- INITIALIZE -------------------- */
+resizeCanvas();
+updateCoinDisplays();
+updateEquipButtons();
+showShopTab("737");
 
-    movingDown = false;
-}
-
-
-/* UP */
-
-upButton.addEventListener(
-    "pointerdown",
-    pressUp
-);
-
-upButton.addEventListener(
-    "pointerup",
-    releaseUp
-);
-
-upButton.addEventListener(
-    "pointercancel",
-    releaseUp
-);
-
-upButton.addEventListener(
-    "pointerleave",
-    releaseUp
-);
-
-
-/* DOWN */
-
-downButton.addEventListener(
-    "pointerdown",
-    pressDown
-);
-
-downButton.addEventListener(
-    "pointerup",
-    releaseDown
-);
-
-downButton.addEventListener(
-    "pointercancel",
-    releaseDown
-);
-
-downButton.addEventListener(
-    "pointerleave",
-    releaseDown
-);
-
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
-document.getElementById(
-    "startButton"
-).addEventListener(
-    "click",
-    startGame
-);
-
-
-document.getElementById(
-    "restartButton"
-).addEventListener(
-    "click",
-    startGame
-);
-
-
-document.getElementById(
-    "shopButton"
-).addEventListener(
-    "click",
-    openShop
-);
-
-
-document.getElementById(
-    "menuShopButton"
-).addEventListener(
-    "click",
-    openShop
-);
-
-
-document.getElementById(
-    "gameOverShopButton"
-).addEventListener(
-    "click",
-    openShop
-);
-
-
-document.getElementById(
-    "closeShopButton"
-).addEventListener(
-    "click",
-    closeShop
-);
-
-
-document.getElementById(
-    "equipDefaultButton"
-).addEventListener(
-    "click",
-    equipDefault
-);
-
-
-document.getElementById(
-    "equipSkin1Button"
-).addEventListener(
-    "click",
-    equipSkin1
-);
-
-
-/* FINAL UI */
-
-updateCoinUI();
-
-updateSkinUI();
-
+/* Start the drawing loop only once. */
+cancelAnimationFrame(animationId);
+animationId = requestAnimationFrame(loop);
 </script>
-
 </body>
 </html>
